@@ -41,13 +41,16 @@ of the repository. Shell commands are all run from the root of the repository.
                 enctype: 'multipart/form-data',
                 novalidate: '', // attribute set with no value if empty string
                 required: null, // attribute not set if value is null
-            }
+            },
         });
 
         myForm.fields.set('username', new ZnJsForm.Field({
             inputType: 'text',
             label: 'Username',
+            note: 'This field is readonly.',
+            noteClasses: ['note'],
             required: true, // in-built validation if this is true
+            fieldClasses: ['field'],
         }));
 
         myForm.fields.set('pet', new ZnJsForm.Field({
@@ -58,14 +61,20 @@ of the repository. Shell commands are all run from the root of the repository.
                 1: 'cat',
                 2: 'dog',
             },
+            fieldClasses: ['field'],
             validateFunction: function (fieldValue, formData) { // optional field validation
                 // return an array of error messages
                 return (fieldValue !== 'cat') ? ['You must choose a cat.'] : [];
             },
         }));
 
-        myForm.fields.get('username').options.readonly = true; // modify field
-        console.log(myForm.render());
+        // Modify field
+        myForm.fields.get('username').options.readonly = true;
+
+        // Validate dropdown to render errors
+        myForm.fields.get('pet').validate('pet', 'dog', {});
+
+        console.log(myForm.render()); // output can be set as innerHTML of some element in webpage
 
 - The above will produce:
 
@@ -74,6 +83,8 @@ of the repository. Shell commands are all run from the root of the repository.
             <div class="field">
                 <label for="username" class="">Username</label>
                 <input name="username" type="text" value="" readonly required class="">
+                <div class="note">This field is readonly.</div>
+                <div class="errors"></div>
             </div>
 
             <div class="field">
@@ -83,6 +94,11 @@ of the repository. Shell commands are all run from the root of the repository.
                     <option value="1">cat</option>
                     <option value="2">dog</option>
                 </select>
+                <div class="errors">
+                    <ul>
+                        <li>You must choose a cat.</li>
+                    </ul>
+                </div>
             </div>
         </form>
 
@@ -136,7 +152,8 @@ of the repository. Shell commands are all run from the root of the repository.
       last part with your token.
     + Run `npm login` to login to your account on the local machine.
     + Remove `"private": true` from `package.json` if it exists.
-    + Run `npm publish --access public`.
+    + Run `npm publish --access public`. The above steps only need to be done
+      once.
     + View the published package at https://www.npmjs.com/package/zn-js-form
       and ensure that the package is public.
 
