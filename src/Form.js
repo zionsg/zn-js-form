@@ -55,7 +55,7 @@ module.exports = (function () {
         formTemplate: '<form name="{{name}}" method="{{method}}" action="{{{action}}}" '
             + '{{{attributes}}} class="{{{classes}}}">{{{formHtml}}}</form>',
         inputTemplates: {
-            'text': '<input name="{{name}}" type="{{type}}" value="{{value}}" '
+            'input': '<input name="{{name}}" type="{{type}}" value="{{value}}" '
                 + '{{{attributes}}} class="{{{classes}}}">',
 
             'select': '<select name="{{name}}" {{{attributes}}} class="{{{classes}}}"> '
@@ -138,7 +138,7 @@ module.exports = (function () {
 
             field.options.inputTemplate = field.options.inputTemplate
                 || self.config.inputTemplates[field.options.inputType]
-                || self.config.inputTemplates['text'];
+                || self.config.inputTemplates['input'];
 
             field.options.requiredText = field.options.requiredText
                 || self.config.requiredText;
