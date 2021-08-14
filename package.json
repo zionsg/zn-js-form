@@ -1,6 +1,6 @@
 {
   "name": "zn-js-form",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A simple library to handle form rendering and validation in Node.js and JavaScript on web browsers.",
   "homepage": "https://github.com/zionsg/zn-js-form",
   "repository": {

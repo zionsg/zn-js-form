@@ -62,7 +62,7 @@ of the repository. Shell commands are all run from the root of the repository.
                 2: 'dog',
             },
             fieldClasses: ['field'],
-            validateFunction: function (fieldValue, formData) { // optional field validation
+            validateFunction: function (fieldName, fieldValue, formData) { // optional field validation
                 // return an array of error messages
                 return (fieldValue !== 'cat') ? ['You must choose a cat.'] : [];
             },
