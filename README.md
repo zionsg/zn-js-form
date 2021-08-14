@@ -24,7 +24,7 @@ of the repository. Shell commands are all run from the root of the repository.
 
 ## Usage
 - For Node.js:
-    + Run `npm install zn-js-form` to install the package.
+    + Run `npm install @zionsg/zn-js-form` to install the package.
     + Import the module, e.g. `const ZnJsForm = require('zn-js-form');`.
 - For JavaScript in web browser:
     + Download this repository into your project directory either by cloning
