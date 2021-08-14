@@ -25,7 +25,7 @@ describe('Render', () => {
 
     it('Render text field with readonly', () => {
         let field = new ZnJsForm.Field({
-            inputTemplate: myForm.config.inputTemplates['text'], // default template
+            inputTemplate: myForm.config.inputTemplates['input'], // default template
             inputType: 'text',
             name: 'username',
             label: 'Username',
