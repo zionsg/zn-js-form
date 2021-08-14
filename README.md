@@ -1,6 +1,7 @@
 # Zion's JavaScript Form
 
-Form for Node.js and JavaScript to handle rendering and validation.
+A simple library to handle form rendering and validation in Node.js and
+JavaScript on web browsers.
 
 Paths in all documentation, even those in subfolders, are relative to the root
 of the repository. Shell commands are all run from the root of the repository.
