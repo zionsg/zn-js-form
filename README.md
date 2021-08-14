@@ -24,7 +24,7 @@ of the repository. Shell commands are all run from the root of the repository.
 
 ## Usage
 - For Node.js:
-    + Run `npm install @zionsg/zn-js-form` to install the package.
+    + Run `npm install zn-js-form` to install the package.
     + Import the module, e.g. `const ZnJsForm = require('zn-js-form');`.
 - For JavaScript in web browser:
     + Download this repository into your project directory either by cloning
@@ -125,6 +125,12 @@ of the repository. Shell commands are all run from the root of the repository.
 - Run `npm run lint` to do linting checks.
 - Run `npm run test` to execute tests.
 - Todo tasks are marked by `@todo` comments.
+- To publish to NPM registry as a public package:
+    + Run `npm login` to login to your account on the local machine.
+    + Remove `"private": true` from `package.json` if it exists.
+    + Run `npm publish`.
+    + View the published package at https://www.npmjs.com/package/@zionsg/zn-js-form
+      and ensure that the package is public.
 
 ## Architecture
 - Entity relationships:
