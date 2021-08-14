@@ -1,0 +1,139 @@
+{
+  "name": "zn-js-form",
+  "version": "0.1.0",
+  "description": "Form for Node.js and JavaScript to handle rendering and validation.",
+  "homepage": "https://github.com/zionsg/zn-js-form",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zionsg/zn-js-form.git"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "//": [
+      "npm will show errors if script exits with 1, e.g. ESLint errors (not warnings).",
+      "Linefeed character still works when enforcing single quotes for ESLint, i.e. '\n'.",
+      "The `--standalone ZnJsForm` option for browserify/watchify exposes the exported object as a global JS variable."
+    ],
+    "build": "gulp build",
+    "lint": "eslint '**/*.js' --ignore-pattern 'dist/' --ignore-pattern 'test/' --ignore-pattern 'node_modules/' --ignore-pattern '*.min.js' --ignore-pattern gulpfile.js",
+    "test": "jest test/*.test.js --detectOpenHandles",
+    "watch": "gulp watch"
+  },
+  "dependencies": {
+    "mustache": "^4.2.0"
+  },
+  "devDependencies": {
+    "@jsdevtools/browserify-banner": "^2.0.4",
+    "browserify": "^17.0.0",
+    "del": "^6.0.0",
+    "eslint": "^6.3.0",
+    "gulp": "^4.0.2",
+    "gulp-babel-minify": "^0.5.1",
+    "jest": "^27.0.6",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "jest": {
+    "//": "Note that bail does not work on nested describe().",
+    "verbose": true,
+    "bail": true,
+    "testEnvironment": "node"
+  },
+  "browserify": {
+    "plugin": [
+      [
+        "@jsdevtools/browserify-banner",
+        {
+          "template": "<%= pkg.name %> v<%= pkg.version %>"
+        }
+      ]
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true,
+      "browser": false
+    },
+    "extends": "eslint:recommended",
+    "globals": {
+      "Atomics": "readonly",
+      "Buffer": "readonly",
+      "SharedArrayBuffer": "readonly",
+      "__dirname": true,
+      "__filename": true,
+      "exports": true,
+      "global": true,
+      "module": false,
+      "process": false,
+      "require": false
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "ecmaFeatures": {
+        "globalReturn": true
+      }
+    },
+    "rules": {
+      "no-unused-vars": "off",
+      "no-useless-escape": "off",
+      "no-inner-declarations": "off",
+      "no-param-reassign": [
+        "off",
+        {
+          "props": true
+        }
+      ],
+      "default-case": "warn",
+      "brace-style": [
+        "error",
+        "1tbs"
+      ],
+      "indent": [
+        "error",
+        4,
+        {
+          "SwitchCase": 1
+        }
+      ],
+      "linebreak-style": [
+        "error",
+        "unix"
+      ],
+      "one-var": [
+        "error",
+        "never"
+      ],
+      "quotes": [
+        "error",
+        "single",
+        {
+          "avoidEscape": true,
+          "allowTemplateLiterals": false
+        }
+      ],
+      "semi": [
+        "error",
+        "always"
+      ],
+      "space-before-function-paren": [
+        "error",
+        {
+          "anonymous": "always",
+          "named": "never",
+          "asyncArrow": "always"
+        }
+      ]
+    },
+    "overrides": [
+      {
+        "files": [
+          "tests/**/*.js"
+        ],
+        "rules": {
+          "no-restricted-syntax": "off"
+        }
+      }
+    ]
+  }
+}

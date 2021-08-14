@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      label {
+        display: block;
+        font-weight: bold;
+      }
+
+      .errors li { color: red; }
+      .field { margin-bottom: 2em; }
+      .note { font-style: italic; }
+
+    </style>
+  </head>
+
+  <body>
+    <div class="container"></div>
+
+    <script src="../dist/bundle.js"></script>
+    <script>
+        let myForm = new ZnJsForm.Form({
+            name: 'myform',
+            action: 'https://example.com',
+            attributes: {
+                enctype: 'multipart/form-data',
+                novalidate: '', // attribute set with no value if empty string
+                required: null, // attribute not set if value is null
+            }
+        });
+
+        myForm.fields.set('username', new ZnJsForm.Field({
+            inputType: 'text',
+            label: 'Username',
+            note: 'This field is readonly.',
+            noteClasses: ['note'],
+            required: true, // in-built validation if this is true
+            fieldClasses: ['field'],
+        }));
+
+        myForm.fields.set('pet', new ZnJsForm.Field({
+            inputType: 'select',
+            label: 'Pets',
+            emptyOptionText: '--- Please choose a pet ---',
+            choices: {
+                1: 'cat',
+                2: 'dog',
+            },
+            fieldClasses: ['field'],
+            validateFunction: function (fieldValue, formData) { // optional field validation
+                // return an array of error messages
+                return (fieldValue !== 'cat') ? ['You must choose a cat.'] : [];
+            },
+        }));
+
+        // Modify field
+        myForm.fields.get('username').options.readonly = true;
+
+        // Validate dropdown to render errors
+        myForm.fields.get('pet').validate('pet', 'dog', {});
+
+        let formHtml = myForm.render();
+        console.log(formHtml);
+        document.querySelector('.container').innerHTML = formHtml;
+    </script>
+  </body>
+</html>
