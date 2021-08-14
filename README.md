@@ -128,7 +128,7 @@ of the repository. Shell commands are all run from the root of the repository.
 - To publish to NPM registry as a public package:
     + Run `npm login` to login to your account on the local machine.
     + Remove `"private": true` from `package.json` if it exists.
-    + Run `npm publish`.
+    + Run `npm publish --access public`.
     + View the published package at https://www.npmjs.com/package/@zionsg/zn-js-form
       and ensure that the package is public.
 
