@@ -23,16 +23,16 @@ describe('Validation', () => {
             name: 'pet',
             inputType: 'select',
             choices: {
-                1: 'cat',
-                2: 'dog',
+                123: 'cat',
+                456: 'dog',
             },
             validateFunction: function (fieldName, fieldValue, formData) {
-                return (fieldValue !== 'cat') ? ['You must choose a cat.'] : [];
+                return (fieldValue !== '123') ? ['You must choose a cat.'] : [];
             },
         });
 
         let expectedErrors = ['You must choose a cat.'].sort();
-        let actualErrors = field.validate(field.name, 'dog').sort();
+        let actualErrors = field.validate(field.name, '456').sort();
         expect(actualErrors).toEqual(expectedErrors);
         expect(field.errors).toEqual(expectedErrors); // check that errors are stored
     });

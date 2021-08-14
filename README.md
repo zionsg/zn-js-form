@@ -58,13 +58,13 @@ of the repository. Shell commands are all run from the root of the repository.
             label: 'Pets',
             emptyOptionText: '--- Please choose a pet ---',
             choices: {
-                1: 'cat',
-                2: 'dog',
+                123: 'cat',
+                456: 'dog',
             },
             fieldClasses: ['field'],
             validateFunction: function (fieldName, fieldValue, formData) { // optional field validation
                 // return an array of error messages
-                return (fieldValue !== 'cat') ? ['You must choose a cat.'] : [];
+                return (fieldValue !== '123') ? ['You must choose a cat.'] : [];
             },
         }));
 
@@ -72,7 +72,7 @@ of the repository. Shell commands are all run from the root of the repository.
         myForm.fields.get('username').options.readonly = true;
 
         // Validate dropdown to render errors
-        myForm.fields.get('pet').validate('pet', 'dog', {});
+        myForm.fields.get('pet').validate('pet', '456', {});
 
         console.log(myForm.render()); // output can be set as innerHTML of some element in webpage
 
@@ -91,8 +91,8 @@ of the repository. Shell commands are all run from the root of the repository.
                 <label for="pet" class="">Pets</label>
                 <select name="pet" class="">
                     <option value="" selected>--- Please choose a pet ---</option>
-                    <option value="1">cat</option>
-                    <option value="2">dog</option>
+                    <option value="123">cat</option>
+                    <option value="456">dog</option>
                 </select>
                 <div class="errors">
                     <ul>
@@ -112,7 +112,7 @@ of the repository. Shell commands are all run from the root of the repository.
         // Code
         let errors = myForm.validate({
             username: '',
-            pet: 'dog',
+            pet: '456',
         });
         console.log(errors);
 
