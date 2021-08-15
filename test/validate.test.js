@@ -49,4 +49,24 @@ describe('Validation', () => {
         expect(actualErrors).toEqual(expectedErrors);
         expect(field.errors).toEqual(expectedErrors); // check that errors are stored
     });
+
+    it('Validate multiple select checkboxes', () => {
+        let field = new ZnJsForm.Field({
+            name: 'hobbies',
+            inputType: 'checkbox',
+            options: {
+                123: 'Cycling',
+                456: 'Running',
+            },
+            validateFunction: function (fieldName, fieldValue, formData) {
+                return (Array.isArray(fieldValue) && 2 === fieldValue.length) ? [] : ['You must tick both options.'];
+            },
+        });
+
+        // No errors expected
+        let expectedErrors = [];
+        let actualErrors = field.validate(field.name, ['123', '456']).sort();
+        expect(actualErrors).toEqual(expectedErrors);
+        expect(field.errors).toEqual(expectedErrors); // check that errors are stored
+    });
 });
