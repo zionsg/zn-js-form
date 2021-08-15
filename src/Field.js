@@ -61,13 +61,15 @@ module.exports = (function () {
      * @property {object} options - Key-value pairs used for <option> elements in <select> element,
      *                              used as such: <option value="${key}">${value}</option>.
      * @property {boolean} readonly - Whether this field is readonly.
-     * @property {boolean} required - Whether this field is required.
+     * @property {boolean} required - Whether this field is required. In-built validation if this
+     *     is true and field is not disabled/readonly.
      * @property {string} requiredText - Text to return for error message if value is empty for
      *     required field. Default is empty string as Form.config.requiredText can be set to
      *     provide a global value for all fields.
-     * @property {mixed} value - Value for input.
+     * @property {mixed|array} value - Value for input. Use an array if input has multiple values,
+     *     e.g. multi-select checkbox group.
      * @property {function(string,string,object): boolean} validateFunction - Function for
-     *     validating submitted input value. Takes in
+     *     validating submitted input value. Does not override in-built validation. Takes in
      *     (name of field in form, submitted value, values for all fields in form) and
      *     returns an array of error messages.
      */
@@ -113,18 +115,25 @@ module.exports = (function () {
     Field.prototype.render = function (templateVariables = null) {
         let self = this; // for use inside callbacks
 
-        // Handling for dropdowns/checkboxes/radios
+        // Handling for select/checkbox/radio fields. May have multiple values passed as array.
         let selectOptions = [];
         let hasSelectedOption = false;
+        let values = self.config.value;
+        if ([null, undefined, ''].includes(values)) { // cannot use `if (!values)` cos values may be 0 or false
+            values = [];
+        } else {
+            values = Array.isArray(values) ? values : [values];
+        }
         Object.keys(this.config.options || {}).forEach(function (optionValue) {
-            if (optionValue === self.config.value) {
+            let isSelected = values.includes(optionValue);
+            if (isSelected) {
                 hasSelectedOption = true;
             }
 
             selectOptions.push({ // keys correspond to Mustache.js template variables
                 optionValue: optionValue,
                 optionText: self.config.options[optionValue],
-                optionSelected: (optionValue === self.config.value),
+                optionSelected: isSelected,
             });
         });
 
@@ -196,10 +205,18 @@ module.exports = (function () {
     Field.prototype.validate = function (fieldName, fieldValue, formData) {
         let errors = [];
 
-        if (this.config.required && ['', undefined, null].includes(fieldValue)) {
-            errors.push(this.config.requiredText);
+        // In-built validation for required check
+        if (this.config.required) {
+            // Do not run required check for disabled/readonly fields
+            if (!this.config.disabled && !this.config.readonly
+                && ['', undefined, null].includes(fieldValue) // does not check array or {}
+            ) {
+                errors.push(this.config.requiredText);
+            }
         }
 
+        // This does not override in-built validation cos field config not passed in,
+        // i.e. cannot check config.required/disabled/readonly
         let validateFn = this.config.validateFunction;
         if (validateFn && 'function' === typeof validateFn) {
             errors.push(...validateFn(fieldName, fieldValue, formData));

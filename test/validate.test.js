@@ -18,6 +18,19 @@ describe('Validation', () => {
         expect(actualErrors).toEqual(expectedErrors);
     });
 
+    it('Do not validate required field that is disabled/readonly', () => {
+        let field = new ZnJsForm.Field({
+            name: 'username',
+            inputType: 'text',
+            required: true,
+            disabled: true,
+            readonly: true,
+        });
+
+        let actualErrors = field.validate(field.name, '').sort();
+        expect(actualErrors).toEqual([]);
+    });
+
     it('Validate select field with custom validateFunction', () => {
         let field = new ZnJsForm.Field({
             name: 'pet',

@@ -49,7 +49,7 @@ of the repository. Shell commands are all run from the root of the repository.
             label: 'Username',
             note: 'This field is readonly.',
             noteClasses: ['note'],
-            required: true, // in-built validation if this is true
+            required: true, // in-built validation if this is true and field not disabled/readonly
             fieldClasses: ['field'],
         }));
 
@@ -62,7 +62,8 @@ of the repository. Shell commands are all run from the root of the repository.
                 456: 'dog',
             },
             fieldClasses: ['field'],
-            validateFunction: function (fieldName, fieldValue, formData) { // optional field validation
+            // Optional field validation, does not override in-built validation for required field
+            validateFunction: function (fieldName, fieldValue, formData) {
                 // Return an array of error messages. Note that web forms return string values.
                 return (fieldValue !== '123') ? ['You must choose a cat.'] : [];
             },
