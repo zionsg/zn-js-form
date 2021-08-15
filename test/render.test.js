@@ -37,7 +37,7 @@ describe('Render', () => {
         // Modify field
         field.config.readonly = true;
 
-        let expectedHtml = '<div class="field"><label for="username" class="">Username</label><input name="username" type="text" value="" readonly required class=""></div>';
+        let expectedHtml = '<div class="field"><label for="username" class="">Username</label><input name="username" type="text" value="" readonly required class="" /></div>';
         expect(utils.stripWhitespace(field.render())).toBe(expectedHtml);
     });
 
@@ -63,6 +63,23 @@ describe('Render', () => {
         field.validate(field.name, 'dog').sort();
 
         let expectedHtml = '<div class="field"><label for="pet" class="">Pets</label><select name="pet" class=""> <option value="" selected>--- Please choose a pet ---</option> <option value="1" >cat</option> <option value="2" >dog</option></select><div class="errors"><ul><li>You must choose a cat.</li></ul></div></div>';
+        expect(utils.stripWhitespace(field.render())).toBe(expectedHtml);
+    });
+
+    it('Render checkboxes', () => {
+        let field = new ZnJsForm.Field({
+            inputTemplate: myForm.config.inputTemplates['checkbox'], // default template
+            inputType: 'checkbox',
+            name: 'hobbies',
+            label: 'Hobbies',
+            fieldClasses: ['field'],
+            options: {
+                123: 'Cycling',
+                456: 'Running',
+            },
+        });
+
+        let expectedHtml = '<div class="field"><label for="hobbies" class="">Hobbies</label><input name="hobbies" type="checkbox" value="123" class="" />Cycling<input name="hobbies" type="checkbox" value="456" class="" />Running</div>';
         expect(utils.stripWhitespace(field.render())).toBe(expectedHtml);
     });
 });

@@ -57,7 +57,13 @@ module.exports = (function () {
             + '{{{attributes}}} class="{{{classes}}}">{{{formHtml}}}</form>',
         inputTemplates: {
             'input': '<input name="{{name}}" type="{{type}}" value="{{value}}" '
-                + '{{{attributes}}} class="{{{classes}}}">',
+                + '{{{attributes}}} class="{{{classes}}}" />',
+
+            'checkbox': '{{#options}}'
+                + '<input name="{{name}}" type="{{type}}" value="{{optionValue}}" '
+                + '{{{attributes}}} {{#optionSelected}}checked{{/optionSelected}} '
+                + 'class="{{{classes}}}" />{{optionText}}'
+                + '{{/options}}',
 
             'select': '<select name="{{name}}" {{{attributes}}} class="{{{classes}}}"> '
                 + '<option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>'
