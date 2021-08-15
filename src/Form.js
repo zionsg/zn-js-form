@@ -65,6 +65,14 @@ module.exports = (function () {
                 + 'class="{{{classes}}}" />{{optionText}}'
                 + '{{/options}}',
 
+            'radio': '{{#options}}'
+                + '<input name="{{name}}" type="{{type}}" value="{{optionValue}}" '
+                + '{{{attributes}}} {{#optionSelected}}checked{{/optionSelected}} '
+                + 'class="{{{classes}}}" />{{optionText}}'
+                + '{{/options}}',
+
+            'html': '{{{value}}}',
+
             'select': '<select name="{{name}}" {{{attributes}}} class="{{{classes}}}"> '
                 + '<option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>'
                 + '{{emptyOptionText}}</option>'
@@ -73,6 +81,10 @@ module.exports = (function () {
                 + '    {{#optionSelected}}selected{{/optionSelected}}>{{optionText}}</option>'
                 + '{{/options}}'
                 + '</select>',
+
+            'textarea': '<textarea name="{{name}}" {{{attributes}}} '
+                + 'class="{{{classes}}}">{{{value}}}</textarea>',
+
         },
         method: 'POST',
         name: '',
