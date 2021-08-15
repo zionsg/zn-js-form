@@ -11,12 +11,12 @@ module.exports = (function () {
      *
      * @public
      * @constructor
-     * @param {object} options - Field options. See `Field.prototype.options`.
+     * @param {object} config - Field config. See `Field.prototype.config`.
      */
-    function Field(options) {
+    function Field(config) {
         // Create new object to prevent mutation of defaults and parameter
         // Shallow copy only
-        this.options = Object.assign({}, Field.prototype.options, options || {});
+        this.config = Object.assign({}, Field.prototype.config, config || {});
     }
 
     /**
@@ -27,12 +27,10 @@ module.exports = (function () {
     Field.prototype.errors = [];
 
     /**
-     * Option defaults for field
+     * Configuration defaults for field
      *
      * @public
      * @type {object}
-     * @property {object} choices - Key-value pairs used for <option> elements in <select> element,
-     *                              used as such: <option value="${key}">${value}</option>.
      * @property {boolean} disabled - Whether this field is disabled.
      * @property {string} emptyOptionText - Text in <option> element where value is empty.
      * @property {string} errorsTemplate - Mustache.js template for rendering
@@ -60,6 +58,8 @@ module.exports = (function () {
      * @property {string} name - Field name. Overrides name set by form if specified.
      * @property {string} note - Optional note displayed with input element.
      * @property {string[]} noteClasses - List of CSS classes for <div> element for note.
+     * @property {object} options - Key-value pairs used for <option> elements in <select> element,
+     *                              used as such: <option value="${key}">${value}</option>.
      * @property {boolean} readonly - Whether this field is readonly.
      * @property {boolean} required - Whether this field is required.
      * @property {string} requiredText - Text to return for error message if value is empty for
@@ -71,8 +71,7 @@ module.exports = (function () {
      *     (name of field in form, submitted value, values for all fields in form) and
      *     returns an array of error messages.
      */
-    Field.prototype.options = { // in alphabetical order, properties before functions
-        choices: null,
+    Field.prototype.config = { // in alphabetical order, properties before functions
         disabled: false,
         emptyOptionText: 'Please select an option',
         errorsTemplate: '',
@@ -95,6 +94,7 @@ module.exports = (function () {
         name: '',
         note: '',
         noteClasses: [],
+        options: null,
         readonly: false,
         required: false,
         requiredText: '',
@@ -113,62 +113,62 @@ module.exports = (function () {
     Field.prototype.render = function (templateVariables = null) {
         let self = this; // for use inside callbacks
 
-        // Handling for dropdowns
+        // Handling for dropdowns/checkboxes/radios
         let selectOptions = [];
         let hasSelectedOption = false;
-        Object.keys(this.options.choices || {}).forEach(function (optionValue) {
-            if (optionValue === self.options.value) {
+        Object.keys(this.config.options || {}).forEach(function (optionValue) {
+            if (optionValue === self.config.value) {
                 hasSelectedOption = true;
             }
 
             selectOptions.push({ // keys correspond to Mustache.js template variables
                 optionValue: optionValue,
-                optionText: self.options.choices[optionValue],
-                optionSelected: (optionValue === self.options.value),
+                optionText: self.config.options[optionValue],
+                optionSelected: (optionValue === self.config.value),
             });
         });
 
         // Input element
         let inputHtml = mustache.render(
-            this.options.inputTemplate || '',
+            this.config.inputTemplate || '',
             {
-                name: this.options.name,
-                type: this.options.inputType,
+                name: this.config.name,
+                type: this.config.inputType,
                 attributes: utils.attributesToString(Object.assign(
                     {
-                        disabled: this.options.disabled ? '' : null,
-                        readonly: this.options.readonly ? '' : null,
-                        required: this.options.required ? '' : null,
+                        disabled: this.config.disabled ? '' : null,
+                        readonly: this.config.readonly ? '' : null,
+                        required: this.config.required ? '' : null,
                     },
-                    this.options.inputAttributes || {},
+                    this.config.inputAttributes || {},
                 )),
-                classes: this.options.inputClasses.join(' '),
-                selectOptions: selectOptions,
+                classes: this.config.inputClasses.join(' '),
+                emptyOptionText: this.config.emptyOptionText,
                 hasSelectedOption: hasSelectedOption,
-                emptyOptionText: this.options.emptyOptionText,
+                options: selectOptions,
             }
         );
 
         // Errors
         let errorsHtml = mustache.render(
-            this.options.errorsTemplate || '',
+            this.config.errorsTemplate || '',
             {
                 errors: this.errors,
             }
         );
 
         return mustache.render(
-            this.options.fieldTemplate || '',
+            this.config.fieldTemplate || '',
             Object.assign(
                 {
-                    name: this.options.name,
-                    fieldAttributes: utils.attributesToString(this.options.fieldAttributes),
-                    fieldClasses: this.options.fieldClasses.join(' '),
-                    label: this.options.label,
-                    labelAttributes: utils.attributesToString(this.options.labelAttributes),
-                    labelClasses: this.options.labelClasses.join(' '),
-                    note: this.options.note,
-                    noteClasses: this.options.noteClasses.join(' '),
+                    name: this.config.name,
+                    fieldAttributes: utils.attributesToString(this.config.fieldAttributes),
+                    fieldClasses: this.config.fieldClasses.join(' '),
+                    label: this.config.label,
+                    labelAttributes: utils.attributesToString(this.config.labelAttributes),
+                    labelClasses: this.config.labelClasses.join(' '),
+                    note: this.config.note,
+                    noteClasses: this.config.noteClasses.join(' '),
                     inputHtml: inputHtml,
                     errorsHtml: errorsHtml,
                 },
@@ -196,11 +196,11 @@ module.exports = (function () {
     Field.prototype.validate = function (fieldName, fieldValue, formData) {
         let errors = [];
 
-        if (this.options.required && ['', undefined, null].includes(fieldValue)) {
-            errors.push(this.options.requiredText);
+        if (this.config.required && ['', undefined, null].includes(fieldValue)) {
+            errors.push(this.config.requiredText);
         }
 
-        let validateFn = this.options.validateFunction;
+        let validateFn = this.config.validateFunction;
         if (validateFn && 'function' === typeof validateFn) {
             errors.push(...validateFn(fieldName, fieldValue, formData));
         }

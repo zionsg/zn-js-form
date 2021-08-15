@@ -43,7 +43,7 @@
             inputType: 'select',
             label: 'Pets',
             emptyOptionText: '--- Please choose a pet ---',
-            choices: {
+            options: {
                 123: 'cat',
                 456: 'dog',
             },
@@ -55,7 +55,7 @@
         }));
 
         // Modify field
-        myForm.fields.get('username').options.readonly = true;
+        myForm.fields.get('username').config.readonly = true;
 
         // Validate dropdown to render errors
         myForm.fields.get('pet').validate('pet', '456', {});

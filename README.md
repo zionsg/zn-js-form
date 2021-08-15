@@ -57,19 +57,19 @@ of the repository. Shell commands are all run from the root of the repository.
             inputType: 'select',
             label: 'Pets',
             emptyOptionText: '--- Please choose a pet ---',
-            choices: {
+            options: {
                 123: 'cat',
                 456: 'dog',
             },
             fieldClasses: ['field'],
             validateFunction: function (fieldName, fieldValue, formData) { // optional field validation
-                // return an array of error messages
+                // Return an array of error messages. Note that web forms return string values.
                 return (fieldValue !== '123') ? ['You must choose a cat.'] : [];
             },
         }));
 
         // Modify field
-        myForm.fields.get('username').options.readonly = true;
+        myForm.fields.get('username').config.readonly = true;
 
         // Validate dropdown to render errors
         myForm.fields.get('pet').validate('pet', '456', {});
@@ -105,7 +105,7 @@ of the repository. Shell commands are all run from the root of the repository.
 - Form validation can be done using the `validate()` method, which returns
   `null` if the form is valid or an object containing an array of error messages
   for each field if the form is invalid. Note that a field may have more than
-  1 error, depending on the `validateFunction` passed via the field options.
+  1 error, depending on the `validateFunction` passed via the field config.
   Errors are stored per field upon validation and will be rendered.
   Sample:
 
@@ -123,8 +123,8 @@ of the repository. Shell commands are all run from the root of the repository.
         }
 
 - No fanciful documentation for now. For more details, check the docblocks
-  in the source code, especially the form configuration and field options in
-  `src/Form.js:Form.prototype.config` and `src/Field.js:Field.prototype.options`
+  in the source code, especially the configuration for forms and fields in
+  `src/Form.js:Form.prototype.config` and `src/Field.js:Field.prototype.config`
   respectively.
     + Also look at the `test` folder. The `test.html` is an example of how
       this library can be used in a webpage, while `*.test.js` show how it can
@@ -164,10 +164,12 @@ of the repository. Shell commands are all run from the root of the repository.
     + A field has a label and an input.
     + An input can be broadly categorized into these types:
       `<input>`, `<textarea>`, `<select>`, `<progress>`, `<meter>`.
+    + Semantically, options are different from choices. A select/checbox/radio
+      presents the user with a fixed list of options but the user makes a choice
+      amongst them.
 - Conventions:
-    + All constructors take in a single parameter of object type. For `Form`,
-      that object is the `config` parameter. For all other classes, the object
-      is the `options` parameter.
+    + All constructors take in a single parameter of object type, which is
+      the configuration.
     + All classes have a `render()` method which takes in an object containing
       additional template variables and returns a string.
 - Workflow:

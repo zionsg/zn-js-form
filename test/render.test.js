@@ -35,7 +35,7 @@ describe('Render', () => {
         });
 
         // Modify field
-        field.options.readonly = true;
+        field.config.readonly = true;
 
         let expectedHtml = '<div class="field"><label for="username" class="">Username</label><input name="username" type="text" value="" readonly required class=""></div>';
         expect(utils.stripWhitespace(field.render())).toBe(expectedHtml);
@@ -49,7 +49,7 @@ describe('Render', () => {
             name: 'pet',
             label: 'Pets',
             emptyOptionText: '--- Please choose a pet ---',
-            choices: {
+            options: {
                 1: 'cat',
                 2: 'dog',
             },

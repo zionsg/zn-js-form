@@ -11,12 +11,12 @@ module.exports = (function () {
      *
      * @public
      * @constructor
-     * @param {object} options - Fieldset options. See `Fieldset.prototype.options`.
+     * @param {object} config - Fieldset config. See `Fieldset.prototype.config`.
      */
-    function Fieldset(options) {
+    function Fieldset(config) {
         // Create new object to prevent mutation of defaults and parameter
         // Shallow copy only
-        this.options = Object.assign({}, Fieldset.prototype.options, options || {});
+        this.config = Object.assign({}, Fieldset.prototype.config, config || {});
     }
 
     /**
@@ -28,7 +28,7 @@ module.exports = (function () {
     Fieldset.prototype.name = '';
 
     /**
-     * Option defaults for fieldset
+     * Configuration defaults for fieldset
      *
      * @public
      * @type {object}
@@ -41,7 +41,7 @@ module.exports = (function () {
      * @property {string} legend - Legend for fieldset.
      * @property {string} name - Fieldset name. Overrides name set by form if specified.
      */
-    Fieldset.prototype.options = {
+    Fieldset.prototype.config = {
         fieldNames: [],
         fieldsetAttributes: {},
         fieldsetClasses: [],
@@ -63,13 +63,13 @@ module.exports = (function () {
      */
     Fieldset.prototype.render = function (templateVariables = null) {
         return mustache.render(
-            this.options.fieldsetTemplate || '',
+            this.config.fieldsetTemplate || '',
             Object.assign(
                 {
-                    name: this.options.name,
-                    fieldsetAttributes: utils.attributesToString(this.options.fieldsetAttributes),
-                    fieldsetClasses: this.options.fieldsetClasses.join(' '),
-                    legend: this.options.legend,
+                    name: this.config.name,
+                    fieldsetAttributes: utils.attributesToString(this.config.fieldsetAttributes),
+                    fieldsetClasses: this.config.fieldsetClasses.join(' '),
+                    legend: this.config.legend,
                 },
                 templateVariables || {}
             )

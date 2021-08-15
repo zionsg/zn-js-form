@@ -33,17 +33,18 @@ module.exports = (function () {
      *     HTML for <form> element.
      * @property {string} errorsTemplate - Mustache.js template for rendering
      *     array of error messages for each field. It may be overridden in field
-     *     options. For simplicity, the classes are embedded in the template
+     *     config. For simplicity, the classes are embedded in the template
      *     instead of having an `errorClasses` key.
      * @property {object} inputTemplates - Key-value pairs where key is input
      *     type (e.g. text, select) and value is Mustache.js template for
      *     rendering HTML for input element. The appropriate input template is
      *     used when rendering the input for a field and may be overridden in
-     *     field options.
+     *     field config.
      * @property {string} method - HTTP method for form submission.
      * @property {string} name - Form name.
      * @property {string} requiredText - Text to return for error message if
-     *     value is empty for required fields. Can be overridden in field options.
+     *     value is empty for required fields. Can be overridden in field
+     *     config.
      */
     Form.prototype.config = { // in alphabetical order, properties before functions
         action: '',
@@ -61,10 +62,10 @@ module.exports = (function () {
             'select': '<select name="{{name}}" {{{attributes}}} class="{{{classes}}}"> '
                 + '<option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>'
                 + '{{emptyOptionText}}</option>'
-                + '{{#selectOptions}}'
+                + '{{#options}}'
                 + '  <option value="{{optionValue}}"'
                 + '    {{#optionSelected}}selected{{/optionSelected}}>{{optionText}}</option>'
-                + '{{/selectOptions}}'
+                + '{{/options}}'
                 + '</select>',
         },
         method: 'POST',
@@ -131,16 +132,16 @@ module.exports = (function () {
         this.fields.forEach(function (field, fieldName) {
             // Not exactly best practice to mutate the field object but
             // it will be non-trivial to resolve the values in other ways
-            field.options.name = field.options.name || fieldName;
+            field.config.name = field.config.name || fieldName;
 
-            field.options.errorsTemplate = field.options.errorsTemplate
+            field.config.errorsTemplate = field.config.errorsTemplate
                 || self.config.errorsTemplate;
 
-            field.options.inputTemplate = field.options.inputTemplate
-                || self.config.inputTemplates[field.options.inputType]
+            field.config.inputTemplate = field.config.inputTemplate
+                || self.config.inputTemplates[field.config.inputType]
                 || self.config.inputTemplates['input'];
 
-            field.options.requiredText = field.options.requiredText
+            field.config.requiredText = field.config.requiredText
                 || self.config.requiredText;
 
             htmlByField[fieldName] = field.render();
@@ -155,7 +156,7 @@ module.exports = (function () {
             this.fieldsets.forEach(function (fieldset, fieldsetName) {
                 // Not exactly best practice to mutate the fieldset object but
                 // it will be non-trivial to resolve the values in other ways
-                fieldset.options.name = fieldset.options.name || fieldsetName;
+                fieldset.config.name = fieldset.config.name || fieldsetName;
 
                 let fieldsHtml = '';
                 fieldset.fieldNames.forEach(function (fieldName) {

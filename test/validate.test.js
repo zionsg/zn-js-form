@@ -13,7 +13,7 @@ describe('Validation', () => {
             requiredText: 'What is your username?',
         });
 
-        let expectedErrors = [field.options.requiredText].sort();
+        let expectedErrors = [field.config.requiredText].sort();
         let actualErrors = field.validate(field.name, '').sort();
         expect(actualErrors).toEqual(expectedErrors);
     });
@@ -22,7 +22,7 @@ describe('Validation', () => {
         let field = new ZnJsForm.Field({
             name: 'pet',
             inputType: 'select',
-            choices: {
+            options: {
                 123: 'cat',
                 456: 'dog',
             },
