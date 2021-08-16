@@ -122,10 +122,11 @@ module.exports = (function () {
         if ([null, undefined, ''].includes(values)) { // cannot use `if (!values)` cos values may be 0 or false
             values = [];
         } else {
-            values = Array.isArray(values) ? values : [values];
+            // Cast all values to string cos ['1'].includes(1) and [1].includes['1'] return false
+            values = (Array.isArray(values) ? values : [values]).map((val) => val.toString());
         }
         Object.keys(this.config.options || {}).forEach(function (optionValue) {
-            let isSelected = values.includes(optionValue);
+            let isSelected = values.includes(optionValue.toString()); // need to cast to string else may not work
             if (isSelected) {
                 hasSelectedOption = true;
             }
