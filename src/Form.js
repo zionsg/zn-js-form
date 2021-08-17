@@ -65,13 +65,13 @@ module.exports = (function () {
                 + 'class="{{{classes}}}" />{{optionText}}'
                 + '{{/options}}',
 
+            'html': '{{{value}}}',
+
             'radio': '{{#options}}'
                 + '<input name="{{name}}" type="{{type}}" value="{{optionValue}}" '
                 + '{{{attributes}}} {{#optionSelected}}checked{{/optionSelected}} '
                 + 'class="{{{classes}}}" />{{optionText}}'
                 + '{{/options}}',
-
-            'html': '{{{value}}}',
 
             'select': '<select name="{{name}}" {{{attributes}}} class="{{{classes}}}"> '
                 + '<option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>'
@@ -103,6 +103,9 @@ module.exports = (function () {
      * `fieldsets.set('myset', new Fieldset({}))` instead of
      * `fieldsets.set('myset', new Fieldset({ name:'myset' }))`. It is also becos
      * the name of the fieldset is dependent on the form that it is used in.
+     *
+     * If at least one fieldset is specified, any fields not belonging to a fieldset will
+     * not be rendered.
      *
      * @public
      * @type {Map.<string, Fieldset>}
@@ -177,11 +180,11 @@ module.exports = (function () {
                 fieldset.config.name = fieldset.config.name || fieldsetName;
 
                 let fieldsHtml = '';
-                fieldset.fieldNames.forEach(function (fieldName) {
+                fieldset.config.fieldNames.forEach(function (fieldName) {
                     fieldsHtml += (htmlByField[fieldName] || '') + '\n';
                 });
 
-                formHtml = fieldset.render({ fieldsHtml: fieldsHtml });
+                formHtml += fieldset.render({ fieldsHtml: fieldsHtml });
             });
         }
 
@@ -215,7 +218,7 @@ module.exports = (function () {
         let hasErrors = false;
         this.fields.forEach((field, fieldName) => {
             let fieldErrors = field.validate(fieldName, formData[fieldName], formData);
-            if (fieldErrors) {
+            if (fieldErrors.length > 0) {
                 hasErrors = true;
                 errors[fieldName] = fieldErrors;
             }
