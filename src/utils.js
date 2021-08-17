@@ -36,10 +36,14 @@ module.exports = (function () {
      * Strip unnecessary whitespace from HTML
      *
      * @param {string} html
+     * @param {boolean} removeAllSpaces - Whether to remove all spaces.
+     *     Not recommended unless for use in test assertions.
      * @returns {string}
      */
-    self.stripWhitespace = function (html) {
-        return (html || '').trim().replace(/[\r\n]/g, '').replace(/\s{2,}/g, ' ');
+    self.stripWhitespace = function (html, removeAllSpaces = false) {
+        let result = (html || '').trim().replace(/(\r\n|\r|\n)/g, '').replace(/\s{2,}/g, ' ');
+
+        return (removeAllSpaces ? result.replace(/\s/g, '') : result);
     };
 
     // Return public interface of IIFE
