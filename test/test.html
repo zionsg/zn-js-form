@@ -35,19 +35,29 @@
         });
         let submitHandler = function (event) {
             event.preventDefault(); // don't submit form to action url
-            console.log('Submit event:', event);
 
             // See https://developer.mozilla.org/en-US/docs/Web/API/FormData
             let formData = new FormData(event.srcElement);
             let submission = {};
             for (let entry of formData.entries()) {
-                submission[entry[0]] = entry[1];
+                // Cater for multiple values such as multi-select checkboxes
+                let key = entry[0];
+                let value = entry[1];
+                if (submission.hasOwnProperty(key)) { // implies a previous entry for same key
+                    if (!Array.isArray(submission[key])) { // transform into array
+                        submission[key] = [submission[key]];
+                    }
+
+                    submission[key].push(value);
+                } else {
+                    submission[key] = value;
+                }
             }
 
             let errors = myForm.validate(submission);
             container.innerHTML = myForm.render(); // render form again after validation
 
-            console.log('Form errors:', errors);
+            console.log('Form submission and errors:', submission, errors);
             if (!errors) {
                 alert('Congrats, your form submission is valid!');
             }
