@@ -107,7 +107,8 @@ of the repository. Shell commands are all run from the root of the repository.
   `null` if the form is valid or an object containing an array of error messages
   for each field if the form is invalid. Note that a field may have more than
   1 error, depending on the `validateFunction` passed via the field config.
-  Errors are stored per field upon validation and will be rendered.
+  Values and errors are stored per field upon validation so that they will
+  be populated if the form gets rendered after validation.
   Sample:
 
         // Code
@@ -128,8 +129,8 @@ of the repository. Shell commands are all run from the root of the repository.
   `src/Form.js:Form.prototype.config` and `src/Field.js:Field.prototype.config`
   respectively.
     + Also look at the `test` folder. The `test.html` is an example of how
-      this library can be used in a webpage, while `*.test.js` show how it can
-      be used in Node.js.
+      this library can be used in a webpage (showcases fieldsets and other
+      types of fields), while `*.test.js` show how it can be used in Node.js.
 
 ## Installation
 - This section is meant for developers.
