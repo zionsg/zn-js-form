@@ -62,6 +62,17 @@
             fieldClasses: ['field'],
         }));
 
+        myForm.fields.set('gender', new ZnJsForm.Field({
+            inputType: 'radio',
+            label: 'Gender',
+            options: {
+                123: 'Female',
+                456: 'Male',
+            },
+            fieldClasses: ['field'],
+            required: true,
+        }));
+
         myForm.fields.set('pet', new ZnJsForm.Field({
             inputType: 'select',
             label: 'Pets',
@@ -87,15 +98,14 @@
             },
         }));
 
-        myForm.fields.set('gender', new ZnJsForm.Field({
-            inputType: 'radio',
-            label: 'Gender',
-            options: {
-                123: 'Female',
-                456: 'Male',
-            },
+        myForm.fields.set('description', new ZnJsForm.Field({
+            inputType: 'textarea',
+            label: 'Write a short description of yourself',
             fieldClasses: ['field'],
-            required: true,
+            inputAttributes: {
+                rows: 10,
+                cols: 40,
+            }
         }));
 
         myForm.fields.set('csrf_token', new ZnJsForm.Field({
@@ -118,7 +128,8 @@
             value: `
                 <p style="font-family:monospace; font-size:1.5em;">
                   This is a field of "html" type which allows insertion of HTML in between fields.
-                  Note that if the form has any fieldsets, any fields not belonging to a fieldset
+                  This field was added last but not rendered last due to use of fielsets. Note that
+                  if the form has any fieldsets, any fields not belonging to a fieldset
                   will not be rendered. Hence remaining fields like the CSRF token and submit
                   button need to be placed in a final fieldset. Btw this form will validate itself
                   when the Submit button is clicked.
@@ -132,7 +143,7 @@
             legend: 'Personal Info',
         }));
         myForm.fieldsets.set('fieldset-for-remaining-fields', new ZnJsForm.Fieldset({
-            fieldNames: ['comments', 'pet', 'hobbies', 'csrf_token', 'submit'],
+            fieldNames: ['comments', 'pet', 'hobbies', 'description', 'csrf_token', 'submit'],
             fieldsetClasses: ['noborder'],
         }));
 
