@@ -156,6 +156,7 @@ module.exports = (function () {
                 emptyOptionText: this.config.emptyOptionText,
                 hasSelectedOption: hasSelectedOption,
                 options: selectOptions,
+                value: this.config.value,
             }
         );
 
@@ -190,7 +191,8 @@ module.exports = (function () {
     /**
      * Validate field
      *
-     * Errors, if any, will be stored in field after validation.
+     * Values and errors, if any, will be stored in field after validation.
+     * This is to aid when rendering the form after validation.
      *
      * @param {mixed} fieldName - Name of field as in formData. Note that
      *     a field may have different names when used in different forms.
@@ -223,7 +225,8 @@ module.exports = (function () {
             errors.push(...validateFn(fieldName, fieldValue, formData));
         }
 
-        // Store errors for rendering purposes
+        // Store value and errors to aid rendering later
+        this.config.value = fieldValue || this.config.value; // need fallback cos Submit button won't have value
         this.errors = errors;
 
         return errors;
