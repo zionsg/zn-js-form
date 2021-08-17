@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <title>Test Page for ZnJsForm</title>
     <style>
       label {
         display: block;
@@ -10,8 +11,8 @@
 
       .errors li { color: red; }
       .field { margin-bottom: 2em; }
+      .noborder { border-width: 0; }
       .note { font-style: italic; }
-
     </style>
   </head>
 
@@ -20,6 +21,8 @@
 
     <script src="../dist/bundle.js"></script>
     <script>
+        let container = document.querySelector('.container');
+
         let myForm = new ZnJsForm.Form({
             name: 'myform',
             action: 'https://example.com',
@@ -27,15 +30,35 @@
                 enctype: 'multipart/form-data',
                 novalidate: '', // attribute set with no value if empty string
                 required: null, // attribute not set if value is null
+                onsubmit: 'submitHandler(event)', // validate form on client-side upon submission
             },
         });
+        let submitHandler = function (event) {
+            event.preventDefault(); // don't submit form to action url
+            console.log('Submit event:', event);
+
+            // See https://developer.mozilla.org/en-US/docs/Web/API/FormData
+            let formData = new FormData(event.srcElement);
+            let submission = {};
+            for (let entry of formData.entries()) {
+                submission[entry[0]] = entry[1];
+            }
+
+            let errors = myForm.validate(submission);
+            container.innerHTML = myForm.render(); // render form again after validation
+
+            console.log('Form errors:', errors);
+            if (!errors) {
+                alert('Congrats, your form submission is valid!');
+            }
+        };
 
         myForm.fields.set('username', new ZnJsForm.Field({
             inputType: 'text',
             label: 'Username',
             note: 'This field is readonly.',
             noteClasses: ['note'],
-            required: true, // in-built validation if this is true
+            required: true, // in-built validation if this is true and field not disabled/readonly
             fieldClasses: ['field'],
         }));
 
@@ -54,6 +77,65 @@
             },
         }));
 
+        myForm.fields.set('hobbies', new ZnJsForm.Field({
+            inputType: 'checkbox',
+            label: 'Hobbies',
+            fieldClasses: ['field'],
+            options: {
+                123: 'Cycling',
+                456: 'Running',
+            },
+        }));
+
+        myForm.fields.set('gender', new ZnJsForm.Field({
+            inputType: 'radio',
+            label: 'Gender',
+            options: {
+                123: 'Female',
+                456: 'Male',
+            },
+            fieldClasses: ['field'],
+            required: true,
+        }));
+
+        myForm.fields.set('csrf_token', new ZnJsForm.Field({
+            inputType: 'hidden',
+            value: 'abcd1234',
+            label: '',
+            fieldClasses: ['field'],
+        }));
+
+        myForm.fields.set('submit', new ZnJsForm.Field({
+            inputType: 'submit',
+            value: 'Submit Form',
+            label: '',
+            fieldClasses: ['field'],
+        }));
+
+        myForm.fields.set('comments', new ZnJsForm.Field({
+            inputType: 'html',
+            fieldTemplate: '{{{inputHtml}}}',
+            value: `
+                <p style="font-family:monospace; font-size:1.5em;">
+                  This is a field of "html" type which allows insertion of HTML in between fields.
+                  Note that if the form has any fieldsets, any fields not belonging to a fieldset
+                  will not be rendered. Hence remaining fields like the CSRF token and submit
+                  button need to be placed in a final fieldset. Btw this form will validate itself
+                  when the Submit button is clicked.
+                </p>
+            `,
+        }));
+
+        // Fieldsets
+        myForm.fieldsets.set('fieldset-for-personal-info', new ZnJsForm.Fieldset({
+            fieldNames: ['username', 'gender'],
+            legend: 'Personal Info',
+        }));
+        myForm.fieldsets.set('fieldset-for-remaining-fields', new ZnJsForm.Fieldset({
+            fieldNames: ['comments', 'pet', 'hobbies', 'csrf_token', 'submit'],
+            fieldsetClasses: ['noborder'],
+        }));
+
         // Modify field
         myForm.fields.get('username').config.readonly = true;
 
@@ -61,8 +143,8 @@
         myForm.fields.get('pet').validate('pet', '456', {});
 
         let formHtml = myForm.render();
-        console.log(formHtml);
-        document.querySelector('.container').innerHTML = formHtml;
+        console.log('Rendered form:', formHtml);
+        container.innerHTML = formHtml;
     </script>
   </body>
 </html>
