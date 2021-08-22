@@ -15,6 +15,9 @@
   "plugins": [
     "plugins/markdown"
   ],
+  "markdown": {
+    "idInHeadings": true
+  },
   "templates": {
     "default": {
       "useLongnameInNav": true
