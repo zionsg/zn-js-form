@@ -36,6 +36,8 @@
         let submitHandler = function (event) {
             event.preventDefault(); // don't submit form to action url
 
+            // Note `myForm` doesn't automatically save the values as the fields are being changed
+            // hence this loop to simulate the actual submission of the HTML form
             // See https://developer.mozilla.org/en-US/docs/Web/API/FormData
             let formData = new FormData(event.srcElement);
             let submission = {};
