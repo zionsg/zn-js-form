@@ -3,15 +3,19 @@ const mustache = require('mustache');
 const utils = require('./utils.js');
 
 /**
- * @class
+ * @class Field
+ * @hideconstructor
  */
-module.exports = (function () {
+const Field = (function () {
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @memberof Field
+     * @method new Field(config)
      *
      * @public
-     * @constructor
      * @param {object} config - Field config. See `Field.prototype.config`.
+     * @returns {Field}
      */
     function Field(config) {
         // Create new object to prevent mutation of defaults and parameter
@@ -22,6 +26,9 @@ module.exports = (function () {
     /**
      * List of error messages set when validate() is called
      *
+     * @memberof Field
+     * @instance
+     *
      * @public
      * @type {string[]}
      */
@@ -30,17 +37,20 @@ module.exports = (function () {
     /**
      * Configuration defaults for field
      *
+     * @memberof Field
+     * @instance
+     *
      * @public
      * @type {object}
      * @property {boolean} disabled - Whether this field is disabled.
-     * @property {string} emptyOptionText - Text in <option> element where value is empty.
+     * @property {string} emptyOptionText - Text in `<option>` element where value is empty.
      * @property {string} errorsTemplate - Mustache.js template for rendering
      *     array of error messages for each field. Overrides errorsTemplate set by form
      *     if specified.
-     * @property {object} fieldAttributes - Key-value pairs for attributes in <div> element
+     * @property {object} fieldAttributes - Key-value pairs for attributes in `<div>` element
      *     containing the field. Use empty string if the attribute has no value, null to unset
      *     the attribute.
-     * @property {string[]} fieldClasses - List of CSS classes for <div> element
+     * @property {string[]} fieldClasses - List of CSS classes for `<div>` element
      *     containing the field.
      * @property {string} fieldTemplate - Mustache.js template for rendering HTML for field
      *     element. The `errorsHtml` template variable is rendered using errorsTemplate.
@@ -55,12 +65,12 @@ module.exports = (function () {
      * @property {object} labelAttributes - Key-value pairs for attributes in
      *     <label>. Use empty string if the attribute has no value, null to
      *     unset the attribute.
-     * @property {string[]} labelClasses - List of CSS classes for <label> element.
+     * @property {string[]} labelClasses - List of CSS classes for `<label>` element.
      * @property {string} name - Field name. Overrides name set by form if specified.
      * @property {string} note - Optional note displayed with input element.
-     * @property {string[]} noteClasses - List of CSS classes for <div> element for note.
-     * @property {object} options - Key-value pairs used for <option> elements in <select> element,
-     *                              used as such: <option value="${key}">${value}</option>.
+     * @property {string[]} noteClasses - List of CSS classes for `<div>` element for note.
+     * @property {object} options - Key-value pairs used for `<option>` elements in `<select>`
+     *     element used as such: `<option value="${key}">${value}</option>`.
      * @property {boolean} readonly - Whether this field is readonly.
      * @property {boolean} required - Whether this field is required. In-built validation if this
      *     is true and field is not disabled/readonly.
@@ -108,6 +118,9 @@ module.exports = (function () {
 
     /**
      * Renders HTML for field
+     *
+     * @memberof Field
+     * @instance
      *
      * @public
      * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
@@ -194,6 +207,9 @@ module.exports = (function () {
     /**
      * Validate field
      *
+     * @memberof Field
+     * @instance
+     *
      * Values and errors, if any, will be stored in field after validation.
      * This is to aid when rendering the form after validation.
      *
@@ -238,3 +254,7 @@ module.exports = (function () {
 
     return Field;
 })();
+
+// JSDoc: Need to assign IIFE to variable instead of module.exports
+// and add @memberof/@instance tags to all properties/methods else docs cannot be generated
+module.exports = Field;

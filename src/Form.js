@@ -2,15 +2,19 @@
 const mustache = require('mustache');
 
 /**
- * @class
+ * @class Form
+ * @hideconstructor
  */
-module.exports = (function () {
+const Form = (function () {
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @memberof Form
+     * @method new Form(config)
      *
      * @public
-     * @constructor
      * @param {object} config - Form configuration. See `Form.prototype.config`.
+     * @returns {Form}
      */
     function Form(config) {
         // Create new object to prevent mutation of defaults and parameter
@@ -18,7 +22,10 @@ module.exports = (function () {
     }
 
     /**
-     * Configuration defaults for form
+     * Configuration defaults for form.
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @type {object}
@@ -26,9 +33,9 @@ module.exports = (function () {
      * @property {object} attributes - Key-value pairs for attributes in <form>
      *     element. Use empty string if the attribute has no value, null to
      *     unset the attribute. E.g.:
-     *     { enctype: 'multipart/form-data', novalidate: '', required: null }
-     *     will produce <form enctype="multipart/form-data" novalidate>.
-     * @property {string[]} classes - List of CSS classes for <form> element.
+     *     `{ enctype: 'multipart/form-data', novalidate: '', required: null }`
+     *     will produce `<form enctype="multipart/form-data" novalidate>`.
+     * @property {string[]} classes - List of CSS classes for `<form>` element.
      * @property {string} formTemplate - Mustache.js template for rendering
      *     HTML for <form> element.
      * @property {string} errorsTemplate - Mustache.js template for rendering
@@ -92,14 +99,14 @@ module.exports = (function () {
     };
 
     /**
-     * Groups of fields, with each group rendered as a <fieldset> element
+     * Groups of fields, with each group rendered as a `<fieldset>` element.
      *
-     * Key is fieldset name, value is Fieldset object.
-     * Uses Map instead of Object/Array so that rendering order can be guaranteed by insertion
+     * Key is fieldset name, value is `Fieldset` object.
+     * Uses `Map` instead of `Object/Array` so that rendering order can be guaranteed by insertion
      * order and specific fieldsets can be referenced easily by name instead of looping each time,
-     * e.g. fieldsets.get('myfieldset').
+     * e.g. `fieldsets.get('myfieldset')`.
      *
-     * Name is made optional in the Fieldset object to reduce repetitions, e.g.
+     * Name is made optional in the `Fieldset` object to reduce repetitions, e.g.
      * `fieldsets.set('myset', new Fieldset({}))` instead of
      * `fieldsets.set('myset', new Fieldset({ name:'myset' }))`. It is also becos
      * the name of the fieldset is dependent on the form that it is used in.
@@ -107,23 +114,29 @@ module.exports = (function () {
      * If at least one fieldset is specified, any fields not belonging to a fieldset will
      * not be rendered.
      *
+     * @memberof Form
+     * @instance
+     *
      * @public
      * @type {Map.<string, Fieldset>}
      */
     Form.prototype.fieldsets = new Map();
 
     /**
-     * Fields
+     * Fields.
      *
-     * Key is fieldset name, value is Fieldset object.
-     * Uses Map instead of Object/Array so that rendering order can be guaranteed by insertion
-     * order and specific fieldsets can be referenced easily by name instead of looping each time,
-     * e.g. fieldsets.get('myfieldset').
+     * Key is fieldset name, value is `Field` object.
+     * Uses `Map` instead of `Object/Array` so that rendering order can be guaranteed by insertion
+     * order and specific fields can be referenced easily by name instead of looping each time,
+     * e.g. `fields.get('myfield')`.
      *
-     * Name is made optional in the Field object to reduce repetitions, e.g.
+     * Name is made optional in the `Field` object to reduce repetitions, e.g.
      * `field.set('myfield', new Field({}))` instead of
      * `field.set('myfield', new Field({ name:'myfield' }))`. It is also becos
      * the name of the field is dependent on the form that it is used in.
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @type {Map.<string, Fieldset>}
@@ -131,7 +144,10 @@ module.exports = (function () {
     Form.prototype.fields = new Map();
 
     /**
-     * Clear form data
+     * Clear form data.
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @returns {void}
@@ -143,7 +159,10 @@ module.exports = (function () {
     };
 
     /**
-     * Get form data
+     * Get form data.
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @returns {object} Key-value pairs where key is field name and value is
@@ -162,7 +181,10 @@ module.exports = (function () {
     };
 
     /**
-     * Renders HTML for entire form
+     * Renders HTML for entire form.
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
@@ -237,7 +259,10 @@ module.exports = (function () {
     };
 
     /**
-     * Set form data
+     * Set form data.
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @param {object} formData - Key-value pairs where key is field name and value is
@@ -255,7 +280,7 @@ module.exports = (function () {
     };
 
     /**
-     * Validate form
+     * Validate form.
      *
      * Values and errors, if any, will be stored in fields after validation.
      * This is to aid when rendering the form after validation.
@@ -274,6 +299,9 @@ module.exports = (function () {
      *             { form_html: form.render() } // partials
      *         }));
      *     }
+     *
+     * @memberof Form
+     * @instance
      *
      * @public
      * @param {(null|object)} [formData=null] - Optional key-value pairs
@@ -304,3 +332,7 @@ module.exports = (function () {
 
     return Form; // refers to `function Form()` which Form.prototype builds upon
 })();
+
+// JSDoc: Need to assign IIFE to variable instead of module.exports
+// and add @memberof/@instance tags to all properties/methods else docs cannot be generated
+module.exports = Form;

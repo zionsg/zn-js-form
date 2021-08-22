@@ -3,15 +3,19 @@ const mustache = require('mustache');
 const utils = require('./utils.js');
 
 /**
- * @class
+ * @class Fieldset
+ * @hideconstructor
  */
-module.exports = (function () {
+const Fieldset = (function () {
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @memberof Fieldset
+     * @method new Fieldset(config)
      *
      * @public
-     * @constructor
      * @param {object} config - Fieldset config. See `Fieldset.prototype.config`.
+     * @returns {Fieldset}
      */
     function Fieldset(config) {
         // Create new object to prevent mutation of defaults and parameter
@@ -20,7 +24,10 @@ module.exports = (function () {
     }
 
     /**
-     * Name of fieldset
+     * Name of fieldset.
+     *
+     * @memberof Fieldset
+     * @instance
      *
      * @public
      * @type {string}
@@ -28,7 +35,10 @@ module.exports = (function () {
     Fieldset.prototype.name = '';
 
     /**
-     * Configuration defaults for fieldset
+     * Configuration defaults for fieldset.
+     *
+     * @memberof Fieldset
+     * @instance
      *
      * @public
      * @type {object}
@@ -36,9 +46,9 @@ module.exports = (function () {
      *     are added to the form, not the fieldset, as it would be easier to keep track of all
      *     the fields in the form. Hence the fieldset only saves the names of the fields in it,
      *     not the fields themselves.
-     * @property {object} fieldsetAttributes - Key-value pairs for attributes in <fieldset> element
-     *     Use empty string if the attribute has no value, null to unset the attribute.
-     * @property {string[]} fieldsetClasses - List of CSS classes for <fieldset> element.
+     * @property {object} fieldsetAttributes - Key-value pairs for attributes in `<fieldset>`
+     *     element. Use empty string if the attribute has no value, null to unset the attribute.
+     * @property {string[]} fieldsetClasses - List of CSS classes for `<fieldset>` element.
      * @property {string} fieldsetTemplate - Mustache.js template for rendering
      *     HTML for fieldset element.
      * @property {string} legend - Legend for fieldset.
@@ -58,7 +68,10 @@ module.exports = (function () {
     };
 
     /**
-     * Renders HTML for fieldset
+     * Renders HTML for fieldset.
+     *
+     * @memberof Fieldset
+     * @instance
      *
      * @public
      * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
@@ -84,3 +97,7 @@ module.exports = (function () {
 
     return Fieldset;
 })();
+
+// JSDoc: Need to assign IIFE to variable instead of module.exports
+// and add @memberof/@instance tags to all properties/methods else docs cannot be generated
+module.exports = Fieldset;

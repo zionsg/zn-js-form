@@ -1,5 +1,7 @@
 /**
  * Common utility functions
+ *
+ * @ignore
  */
 module.exports = (function () {
     /**

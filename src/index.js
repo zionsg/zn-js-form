@@ -1,12 +1,12 @@
 /**
- * Entrypoint of entire library
+ * Entrypoint of entire library.
  *
- * @module
+ * @namespace ZnJsForm
  */
-
-module.exports = {
+const ZnJsForm = {
     Form: require('./Form.js'),
     Fieldset: require('./Fieldset.js'),
     Field: require('./Field.js'),
 };
 
+module.exports = ZnJsForm;
