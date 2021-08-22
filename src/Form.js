@@ -131,10 +131,42 @@ module.exports = (function () {
     Form.prototype.fields = new Map();
 
     /**
+     * Clear form data
+     *
+     * @public
+     * @returns {void}
+     */
+    Form.prototype.clearData = function () {
+        this.fields.forEach(function (field, fieldName) {
+            field.value = ''; // note for web form submissions, empty value is always ""
+        });
+    };
+
+    /**
+     * Get form data
+     *
+     * @public
+     * @returns {object} Key-value pairs where key is field name and value is
+     *     field value. Type of value may be string, number or array (multiple values such as for
+     *     multi-select checkbox group).
+     */
+    Form.prototype.getData = function () {
+        // Not saving in private instance variable so that data is always the most updated copy
+        let result = {};
+
+        this.fields.forEach(function (field, fieldName) {
+            result[fieldName] = field.value;
+        });
+
+        return result;
+    };
+
+    /**
      * Renders HTML for entire form
      *
-     * @param {object} templateVariables - Optional key-value pairs that can
-     *     be used to add on to or override current template variables.
+     * @public
+     * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
+     *     that can be used to add on to or override current template variables.
      * @returns {string}
      */
     Form.prototype.render = function (templateVariables = null) {
@@ -205,15 +237,58 @@ module.exports = (function () {
     };
 
     /**
+     * Set form data
+     *
+     * @public
+     * @param {object} formData - Key-value pairs where key is field name and value is
+     *     field value. Type of value may be string, number or array (multiple values such as for
+     *     multi-select checkbox group).
+     * @returns {void}
+     */
+    Form.prototype.setData = function (formData) {
+        // Not saving in private instance variable as the values are saved in the fields themselves
+        Object.keys(formData || {}).forEach((fieldName) => {
+            if (this.fields.has(fieldName)) {
+                this.fields.get(fieldName).value = formData[fieldName];
+            }
+        });
+    };
+
+    /**
      * Validate form
      *
-     * @param {object} formData - Submitted values for form as key-value pairs
+     * Values and errors, if any, will be stored in fields after validation.
+     * This is to aid when rendering the form after validation.
+     *
+     * The method signature allows the validation of a form submission in one
+     * line instead of having to call form.setData() each time before calling
+     * form.validate(). Example scenario in an Express app:
+     *
+     *     // If need form.setData() then code for response will be duplicated
+     *     if ('GET' === request.method
+     *         || ('POST' === request.method && !form.validate(request.body))
+     *     ) {
+     *         response.send(mustache.render({ // Mustache.js
+     *             viewHtml, // template
+     *             { record: record }, // template variables
+     *             { form_html: form.render() } // partials
+     *         }));
+     *     }
+     *
+     * @public
+     * @param {(null|object)} [formData=null] - Optional key-value pairs
      *     where the key is the field name and the value is the submitted value.
+     *     If null or unspecified, current values in fields will be used for
+     *     validation.
      * @returns {(null|object)} Null returned if form is valid, else key-value
      *     pairs are returned, with key being field name and value being
      *     the error message for the field.
      */
-    Form.prototype.validate = function (formData) {
+    Form.prototype.validate = function (formData = null) {
+        if (!formData) {
+            formData = this.getFormData();
+        }
+
         let errors = {};
         let hasErrors = false;
         this.fields.forEach((field, fieldName) => {
