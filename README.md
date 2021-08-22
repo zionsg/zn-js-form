@@ -31,7 +31,7 @@ of the repository. Shell commands are all run from the root of the repository.
 
 ## Usage
 - Visit https://zionsg.github.io/zn-js-form/jsdoc to view the generated JSDoc
-  documentation (which are in `docs/jsdoc` folder and served via GitHub Pages
+  documentation (saved in `docs/jsdoc` folder and served via GitHub Pages
   pointing to `docs/index.html`).
     + Also look at the `test` folder. The `test.html` is an example of how
       this library can be used in a webpage (showcases fieldsets and other
