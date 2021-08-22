@@ -138,16 +138,18 @@ of the repository. Shell commands are all run from the root of the repository.
         }
 
 ## Installation
-- This section is meant for developers.
+- This section is meant for developers. Todo tasks are marked by `@todo` comments.
 - Clone this repository.
 - Run `npm run install` to install dependencies.
-- Run `npm run build` to bundle the code so that it can be used
-  in a web browser. The output will be in `dist/bundle.js`.
-- Run `npm run watch` to automatically bundle the code each time the source
-  code is changed.
-- Run `npm run lint` to do linting checks.
-- Run `npm run test` to execute tests.
-- Todo tasks are marked by `@todo` comments.
+- Other NPM scripts:
+    + `npm run build`: Bundle the source code so that it can be used
+      in a web browser. The output will be in `dist/bundle.js`.
+    + `npm run watch`: Automatically bundle the code each time the source
+      code is changed on the local machine.
+    + `npm run doc`: Generate JSDoc documentation and save in `docs/jsdoc`
+      folder.
+    + `npm run lint`: Linting checks.
+    + `npm run test`: Execute tests.
 - To publish to NPM registry as a public package:
     + Login to https://www.npmjs.com
         * Go to "Access Tokens".
