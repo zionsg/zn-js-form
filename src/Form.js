@@ -146,6 +146,10 @@ const Form = (function () {
     /**
      * Clear form data.
      *
+     * Each field will be set to its default value as per `field.config.value`,
+     * not an empty string, else buttons and html type fields will lose their
+     * text.
+     *
      * @memberof Form
      * @instance
      *
@@ -154,7 +158,7 @@ const Form = (function () {
      */
     Form.prototype.clearData = function () {
         this.fields.forEach(function (field, fieldName) {
-            field.value = ''; // note for web form submissions, empty value is always ""
+            field.value = field.config.value;
         });
     };
 
@@ -314,7 +318,7 @@ const Form = (function () {
      */
     Form.prototype.validate = function (formData = null) {
         if (!formData) {
-            formData = this.getFormData();
+            formData = this.getData();
         }
 
         let errors = {};

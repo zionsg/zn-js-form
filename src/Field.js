@@ -24,17 +24,6 @@ const Field = (function () {
     }
 
     /**
-     * List of error messages set when validate() is called
-     *
-     * @memberof Field
-     * @instance
-     *
-     * @public
-     * @type {string[]}
-     */
-    Field.prototype.errors = [];
-
-    /**
      * Configuration defaults for field
      *
      * @memberof Field
@@ -77,9 +66,9 @@ const Field = (function () {
      * @property {string} requiredText - Text to return for error message if value is empty for
      *     required field. Default is empty string as Form.config.requiredText can be set to
      *     provide a global value for all fields.
-     * @property {string|number|array} value - Value for input. Use an array if input has multiple
-     *     values, e.g. multi-select checkbox group. Note that field values in web form submissions
-     *     are always of string type, hence no catering for null/undefined/boolean types.
+     * @property {string|number|array} value - Default value for input. Use an array if input has
+     *     multiple values, e.g. multi-select checkbox group. Note that field values in web form
+     *     submissions are always of string type, hence no catering for null/undefined/boolean types.
      * @property {function(string,string,object): boolean} validateFunction - Function for
      *     validating submitted input value. Does not override in-built validation. Takes in
      *     (name of field in form, submitted value, values for all fields in form) and
@@ -117,6 +106,32 @@ const Field = (function () {
     };
 
     /**
+     * List of error messages set when validate() is called
+     *
+     * @memberof Field
+     * @instance
+     *
+     * @public
+     * @type {string[]}
+     */
+    Field.prototype.errors = [];
+
+    /**
+     * Current value for field
+     *
+     * Note that field values in web form submissions are always of string type,
+     * hence no catering for null/undefined/boolean types. An array is used
+     * when there are multiple values, such as for multi-select checkbox groups.
+     *
+     * @memberof Field
+     * @instance
+     *
+     * @public
+     * @type {string|number|array}
+     */
+    Field.prototype.value = '';
+
+    /**
      * Renders HTML for field
      *
      * @memberof Field
@@ -134,7 +149,7 @@ const Field = (function () {
         // Handling for select/checkbox/radio fields. May have multiple values passed as array.
         let selectOptions = [];
         let hasSelectedOption = false;
-        let values = self.config.value;
+        let values = self.value || self.config.value;
         if ([null, undefined, ''].includes(values)) { // cannot use `if (!values)` cos values may be 0 or false
             values = [];
         } else {
@@ -172,7 +187,7 @@ const Field = (function () {
                 emptyOptionText: this.config.emptyOptionText,
                 hasSelectedOption: hasSelectedOption,
                 options: selectOptions,
-                value: this.config.value,
+                value: this.value || this.config.value, // current value, then default value as fallback
             }
         );
 
@@ -246,7 +261,7 @@ const Field = (function () {
         }
 
         // Store value and errors to aid rendering later
-        this.config.value = fieldValue || this.config.value; // need fallback cos Submit button won't have value
+        this.value = fieldValue || this.config.value; // need fallback cos Submit button won't have value
         this.errors = errors;
 
         return errors;
