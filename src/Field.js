@@ -22,6 +22,7 @@ module.exports = (function () {
     /**
      * List of error messages set when validate() is called
      *
+     * @public
      * @type {string[]}
      */
     Field.prototype.errors = [];
@@ -66,8 +67,9 @@ module.exports = (function () {
      * @property {string} requiredText - Text to return for error message if value is empty for
      *     required field. Default is empty string as Form.config.requiredText can be set to
      *     provide a global value for all fields.
-     * @property {mixed|array} value - Value for input. Use an array if input has multiple values,
-     *     e.g. multi-select checkbox group.
+     * @property {string|number|array} value - Value for input. Use an array if input has multiple
+     *     values, e.g. multi-select checkbox group. Note that field values in web form submissions
+     *     are always of string type, hence no catering for null/undefined/boolean types.
      * @property {function(string,string,object): boolean} validateFunction - Function for
      *     validating submitted input value. Does not override in-built validation. Takes in
      *     (name of field in form, submitted value, values for all fields in form) and
@@ -107,9 +109,10 @@ module.exports = (function () {
     /**
      * Renders HTML for field
      *
-     * @param {object} templateVariables - Optional key-value pairs that can
-     *     be used to add on to or override template variables for the final
-     *     rendering (not for intermediate renders such as input and errors).
+     * @public
+     * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
+     *     that can be used to add on to or override template variables for the
+     *     final rendering (not for intermediate renders such as input and errors).
      * @returns {string}
      */
     Field.prototype.render = function (templateVariables = null) {
@@ -194,6 +197,7 @@ module.exports = (function () {
      * Values and errors, if any, will be stored in field after validation.
      * This is to aid when rendering the form after validation.
      *
+     * @public
      * @param {mixed} fieldName - Name of field as in formData. Note that
      *     a field may have different names when used in different forms.
      * @param {mixed} fieldValue - Submitted value for field.
