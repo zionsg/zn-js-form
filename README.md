@@ -170,6 +170,15 @@ of the repository. Shell commands are all run from the root of the repository.
       presents the user with a fixed list of options but the user makes a choice
       amongst them.
 - Conventions:
+    + The variables defined in a method signature are called method parameters.
+      The values passed to a method when calling it are called method arguments.
+    + Note that for typical web form submissions, field values are always
+      of string or array type (multiple values such as for multi-select
+      checkbox groups).
+        * A value of an empty string implies an empty value for a field, i.e.
+          the user did not key in anything for the field.
+        * Even if a user keys in a number, it will be submitted as a string.
+        * Hence, a field would not have null/undefined/boolean values.
     + All constructors take in a single parameter of object type, which is
       the configuration.
     + All classes have a `render()` method which takes in an object containing
