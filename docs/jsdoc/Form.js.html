@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Form.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/zionsg/zn-js-form" target="_blank" class="menu-item" id="repository" >GitHub repository</a></h2><h3>Namespaces</h3><ul><li><a href="ZnJsForm.html">ZnJsForm</a></li></ul><h3>Classes</h3><ul><li><a href="Field.html">Field</a><ul class='methods'><li data-type='method'><a href="Field.html#.newFieldconfig">new Field</a></li><li data-type='method'><a href="Field.html#render">render</a></li><li data-type='method'><a href="Field.html#validate">validate</a></li></ul></li><li><a href="Fieldset.html">Fieldset</a><ul class='methods'><li data-type='method'><a href="Fieldset.html#.newFieldsetconfig">new Fieldset</a></li><li data-type='method'><a href="Fieldset.html#render">render</a></li></ul></li><li><a href="Form.html">Form</a><ul class='methods'><li data-type='method'><a href="Form.html#.newFormconfig">new Form</a></li><li data-type='method'><a href="Form.html#clearData">clearData</a></li><li data-type='method'><a href="Form.html#getData">getData</a></li><li data-type='method'><a href="Form.html#render">render</a></li><li data-type='method'><a href="Form.html#setData">setData</a></li><li data-type='method'><a href="Form.html#validate">validate</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Form.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Import modules
+const mustache = require('mustache');
+
+/**
+ * @class Form
+ * @hideconstructor
+ */
+const Form = (function () {
+    /**
+     * Constructor.
+     *
+     * @memberof Form
+     * @method new Form(config)
+     *
+     * @public
+     * @param {object} config - Form configuration. See `Form.prototype.config`.
+     * @returns {Form}
+     */
+    function Form(config) {
+        // Create new object to prevent mutation of defaults and parameter
+        this.config = Object.assign({}, Form.prototype.config, config || {});
+    }
+
+    /**
+     * Configuration defaults for form.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @type {object}
+     * @property {string} action - URL for form submission.
+     * @property {object} attributes - Key-value pairs for attributes in &lt;form>
+     *     element. Use empty string if the attribute has no value, null to
+     *     unset the attribute. E.g.:
+     *     `{ enctype: 'multipart/form-data', novalidate: '', required: null }`
+     *     will produce `&lt;form enctype="multipart/form-data" novalidate>`.
+     * @property {string[]} classes - List of CSS classes for `&lt;form>` element.
+     * @property {string} formTemplate - Mustache.js template for rendering
+     *     HTML for &lt;form> element.
+     * @property {string} errorsTemplate - Mustache.js template for rendering
+     *     array of error messages for each field. It may be overridden in field
+     *     config. For simplicity, the classes are embedded in the template
+     *     instead of having an `errorClasses` key.
+     * @property {object} inputTemplates - Key-value pairs where key is input
+     *     type (e.g. text, select) and value is Mustache.js template for
+     *     rendering HTML for input element. The appropriate input template is
+     *     used when rendering the input for a field and may be overridden in
+     *     field config.
+     * @property {string} method - HTTP method for form submission.
+     * @property {string} name - Form name.
+     * @property {string} requiredText - Text to return for error message if
+     *     value is empty for required fields. Can be overridden in field
+     *     config.
+     */
+    Form.prototype.config = { // in alphabetical order, properties before functions
+        action: '',
+        attributes: {},
+        classes: [],
+        errorsTemplate: '&lt;div class="errors">{{#errors}}&lt;ul>'
+            + '&lt;li>{{.}}&lt;/li>'
+            + '&lt;/ul>{{/errors}}&lt;/div>',
+        formTemplate: '&lt;form name="{{name}}" method="{{method}}" action="{{{action}}}" '
+            + '{{{attributes}}} class="{{{classes}}}">{{{formHtml}}}&lt;/form>',
+        inputTemplates: {
+            'input': '&lt;input name="{{name}}" type="{{type}}" value="{{value}}" '
+                + '{{{attributes}}} class="{{{classes}}}" />',
+
+            'checkbox': '{{#options}}'
+                + '&lt;input name="{{name}}" type="{{type}}" value="{{optionValue}}" '
+                + '{{{attributes}}} {{#optionSelected}}checked{{/optionSelected}} '
+                + 'class="{{{classes}}}" />{{optionText}}'
+                + '{{/options}}',
+
+            'html': '{{{value}}}',
+
+            'radio': '{{#options}}'
+                + '&lt;input name="{{name}}" type="{{type}}" value="{{optionValue}}" '
+                + '{{{attributes}}} {{#optionSelected}}checked{{/optionSelected}} '
+                + 'class="{{{classes}}}" />{{optionText}}'
+                + '{{/options}}',
+
+            'select': '&lt;select name="{{name}}" {{{attributes}}} class="{{{classes}}}"> '
+                + '&lt;option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>'
+                + '{{emptyOptionText}}&lt;/option>'
+                + '{{#options}}'
+                + '  &lt;option value="{{optionValue}}"'
+                + '    {{#optionSelected}}selected{{/optionSelected}}>{{optionText}}&lt;/option>'
+                + '{{/options}}'
+                + '&lt;/select>',
+
+            'textarea': '&lt;textarea name="{{name}}" {{{attributes}}} '
+                + 'class="{{{classes}}}">{{{value}}}&lt;/textarea>',
+
+        },
+        method: 'POST',
+        name: '',
+        requiredText: 'This field is required.',
+    };
+
+    /**
+     * Groups of fields, with each group rendered as a `&lt;fieldset>` element.
+     *
+     * Key is fieldset name, value is `Fieldset` object.
+     * Uses `Map` instead of `Object/Array` so that rendering order can be guaranteed by insertion
+     * order and specific fieldsets can be referenced easily by name instead of looping each time,
+     * e.g. `fieldsets.get('myfieldset')`.
+     *
+     * Name is made optional in the `Fieldset` object to reduce repetitions, e.g.
+     * `fieldsets.set('myset', new Fieldset({}))` instead of
+     * `fieldsets.set('myset', new Fieldset({ name:'myset' }))`. It is also becos
+     * the name of the fieldset is dependent on the form that it is used in.
+     *
+     * If at least one fieldset is specified, any fields not belonging to a fieldset will
+     * not be rendered.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @type {Map.&lt;string, Fieldset>}
+     */
+    Form.prototype.fieldsets = new Map();
+
+    /**
+     * Fields.
+     *
+     * Key is fieldset name, value is `Field` object.
+     * Uses `Map` instead of `Object/Array` so that rendering order can be guaranteed by insertion
+     * order and specific fields can be referenced easily by name instead of looping each time,
+     * e.g. `fields.get('myfield')`.
+     *
+     * Name is made optional in the `Field` object to reduce repetitions, e.g.
+     * `field.set('myfield', new Field({}))` instead of
+     * `field.set('myfield', new Field({ name:'myfield' }))`. It is also becos
+     * the name of the field is dependent on the form that it is used in.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @type {Map.&lt;string, Fieldset>}
+     */
+    Form.prototype.fields = new Map();
+
+    /**
+     * Clear form data.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @returns {void}
+     */
+    Form.prototype.clearData = function () {
+        this.fields.forEach(function (field, fieldName) {
+            field.value = ''; // note for web form submissions, empty value is always ""
+        });
+    };
+
+    /**
+     * Get form data.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @returns {object} Key-value pairs where key is field name and value is
+     *     field value. Type of value may be string, number or array (multiple values such as for
+     *     multi-select checkbox group).
+     */
+    Form.prototype.getData = function () {
+        // Not saving in private instance variable so that data is always the most updated copy
+        let result = {};
+
+        this.fields.forEach(function (field, fieldName) {
+            result[fieldName] = field.value;
+        });
+
+        return result;
+    };
+
+    /**
+     * Renders HTML for entire form.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
+     *     that can be used to add on to or override current template variables.
+     * @returns {string}
+     */
+    Form.prototype.render = function (templateVariables = null) {
+        let self = this; // for use inside callbacks
+
+        let attributes = [];
+        for (const [key, value] of Object.entries(this.config.attributes)) {
+            if (value !== null) {
+                attributes.push(key + ('' === value ? '' : `="${value}"`));
+            }
+        }
+
+        // Since all fields need to be rendered, might as well store the HTML
+        // and index by the field names, for use with fieldsets
+        let htmlByField = {};
+        this.fields.forEach(function (field, fieldName) {
+            // Not exactly best practice to mutate the field object but
+            // it will be non-trivial to resolve the values in other ways
+            field.config.name = field.config.name || fieldName;
+
+            field.config.errorsTemplate = field.config.errorsTemplate
+                || self.config.errorsTemplate;
+
+            field.config.inputTemplate = field.config.inputTemplate
+                || self.config.inputTemplates[field.config.inputType]
+                || self.config.inputTemplates['input'];
+
+            field.config.requiredText = field.config.requiredText
+                || self.config.requiredText;
+
+            htmlByField[fieldName] = field.render();
+        });
+
+        // Render all fields if there are no fieldsets, else render fieldsets only
+        // Interestingly, '\n' works like "\n". Double quotes disallowed in ESLint.
+        let formHtml = '';
+        if (0 === this.fieldsets.size) {
+            formHtml = Object.values(htmlByField).join('\n');
+        } else {
+            this.fieldsets.forEach(function (fieldset, fieldsetName) {
+                // Not exactly best practice to mutate the fieldset object but
+                // it will be non-trivial to resolve the values in other ways
+                fieldset.config.name = fieldset.config.name || fieldsetName;
+
+                let fieldsHtml = '';
+                fieldset.config.fieldNames.forEach(function (fieldName) {
+                    fieldsHtml += (htmlByField[fieldName] || '') + '\n';
+                });
+
+                formHtml += fieldset.render({ fieldsHtml: fieldsHtml });
+            });
+        }
+
+        return mustache.render(
+            this.config.formTemplate || '',
+            Object.assign(
+                {
+                    name: this.config.name,
+                    method: this.config.method,
+                    action: this.config.action,
+                    attributes: attributes ? attributes.join(' ') : '',
+                    classes: this.config.classes.join(' '),
+                    formHtml: formHtml,
+                },
+                templateVariables || {}
+            )
+        );
+    };
+
+    /**
+     * Set form data.
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @param {object} formData - Key-value pairs where key is field name and value is
+     *     field value. Type of value may be string, number or array (multiple values such as for
+     *     multi-select checkbox group).
+     * @returns {void}
+     */
+    Form.prototype.setData = function (formData) {
+        // Not saving in private instance variable as the values are saved in the fields themselves
+        Object.keys(formData || {}).forEach((fieldName) => {
+            if (this.fields.has(fieldName)) {
+                this.fields.get(fieldName).value = formData[fieldName];
+            }
+        });
+    };
+
+    /**
+     * Validate form.
+     *
+     * Values and errors, if any, will be stored in fields after validation.
+     * This is to aid when rendering the form after validation.
+     *
+     * The method signature allows the validation of a form submission in one
+     * line instead of having to call form.setData() each time before calling
+     * form.validate(). Example scenario in an Express app:
+     *
+     *     // If need form.setData() then code for response will be duplicated
+     *     if ('GET' === request.method
+     *         || ('POST' === request.method &amp;&amp; !form.validate(request.body))
+     *     ) {
+     *         response.send(mustache.render({ // Mustache.js
+     *             viewHtml, // template
+     *             { record: record }, // template variables
+     *             { form_html: form.render() } // partials
+     *         }));
+     *     }
+     *
+     * @memberof Form
+     * @instance
+     *
+     * @public
+     * @param {(null|object)} [formData=null] - Optional key-value pairs
+     *     where the key is the field name and the value is the submitted value.
+     *     If null or unspecified, current values in fields will be used for
+     *     validation.
+     * @returns {(null|object)} Null returned if form is valid, else key-value
+     *     pairs are returned, with key being field name and value being
+     *     the error message for the field.
+     */
+    Form.prototype.validate = function (formData = null) {
+        if (!formData) {
+            formData = this.getFormData();
+        }
+
+        let errors = {};
+        let hasErrors = false;
+        this.fields.forEach((field, fieldName) => {
+            let fieldErrors = field.validate(fieldName, formData[fieldName], formData);
+            if (fieldErrors.length > 0) {
+                hasErrors = true;
+                errors[fieldName] = fieldErrors;
+            }
+        });
+
+        return (hasErrors ? errors : null);
+    };
+
+    return Form; // refers to `function Form()` which Form.prototype builds upon
+})();
+
+// JSDoc: Need to assign IIFE to variable instead of module.exports
+// and add @memberof/@instance tags to all properties/methods else docs cannot be generated
+module.exports = Form;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Aug 22 2021 16:56:10 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

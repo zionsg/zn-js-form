@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/zionsg/zn-js-form" target="_blank" class="menu-item" id="repository" >GitHub repository</a></h2><h3>Namespaces</h3><ul><li><a href="ZnJsForm.html">ZnJsForm</a></li></ul><h3>Classes</h3><ul><li><a href="Field.html">Field</a><ul class='methods'><li data-type='method'><a href="Field.html#.newFieldconfig">new Field</a></li><li data-type='method'><a href="Field.html#render">render</a></li><li data-type='method'><a href="Field.html#validate">validate</a></li></ul></li><li><a href="Fieldset.html">Fieldset</a><ul class='methods'><li data-type='method'><a href="Fieldset.html#.newFieldsetconfig">new Fieldset</a></li><li data-type='method'><a href="Fieldset.html#render">render</a></li></ul></li><li><a href="Form.html">Form</a><ul class='methods'><li data-type='method'><a href="Form.html#.newFormconfig">new Form</a></li><li data-type='method'><a href="Form.html#clearData">clearData</a></li><li data-type='method'><a href="Form.html#getData">getData</a></li><li data-type='method'><a href="Form.html#render">render</a></li><li data-type='method'><a href="Form.html#setData">setData</a></li><li data-type='method'><a href="Form.html#validate">validate</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme usertext">
+        <article><h1>Zion's JavaScript Form</h1>
+<p>A simple library to handle form rendering and validation in Node.js and
+JavaScript on web browsers.</p>
+<p>Paths in all documentation, even those in subfolders, are relative to the root
+of the repository. Shell commands are all run from the root of the repository.</p>
+<h2>Sections</h2>
+<ul>
+<li><a href="#references">References</a></li>
+<li><a href="#changelog">Changelog</a></li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#architecture">Architecture</a></li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://github.com/janl/mustache.js">Mustache.js</a>: This templating library
+is used for rendering HTML for the form and its components.</li>
+<li><a href="https://getbootstrap.com/docs/5.0/forms/overview/">Bootstrap 5.0 Forms</a>: This
+library is not used, but the default rendering templates follows its examples.</li>
+<li><a href="https://jsdoc.app">JSDoc</a>: Used for docblocks in source code.</li>
+<li>Related repositories:
+<ul>
+<li><a href="https://github.com/zionsg/ZnPhp-Form">ZnPhp-Form</a>:
+Simple form class to handle config, validation and rendering for fast
+deployment on a PHP site without any framework.</li>
+<li><a href="https://github.com/zionsg/ZnZend/tree/master/src/Form">ZnZend Form</a>:
+Form component of library for Zend Framework 2.</li>
+</ul>
+</li>
+</ul>
+<h2>Changelog</h2>
+<ul>
+<li>See <code>CHANGELOG.md</code>. Note that changes are only documented from v1.0.0 onwards.</li>
+</ul>
+<h2>Usage</h2>
+<ul>
+<li>
+<p>For Node.js:</p>
+<ul>
+<li>Run <code>npm install zn-js-form</code> to install the package.</li>
+<li>Import the module, e.g. <code>const ZnJsForm = require('zn-js-form');</code>.</li>
+</ul>
+</li>
+<li>
+<p>For JavaScript in web browser:</p>
+<ul>
+<li>Download this repository into your project directory either by cloning
+it into a subfolder or using NPM to install it into <code>node_modules</code>
+subfolder.</li>
+<li>Include the bundle script <code>dist/bundle.js</code> on the webpage, e.g.
+<code>&lt;script src=&quot;zn-js-form/dist/bundle.js&quot;&gt;&lt;/script&gt;</code>.</li>
+</ul>
+</li>
+<li>
+<p>Sample code (same for Node.js and JavaScript):</p>
+<pre><code>  let myForm = new ZnJsForm.Form({
+      name: 'myform',
+      action: 'https://example.com',
+      attributes: {
+          enctype: 'multipart/form-data',
+          novalidate: '', // attribute set with no value if empty string
+          required: null, // attribute not set if value is null
+      },
+  });
+
+  myForm.fields.set('username', new ZnJsForm.Field({
+      inputType: 'text',
+      label: 'Username',
+      note: 'This field is readonly.',
+      noteClasses: ['note'],
+      required: true, // in-built validation if this is true and field not disabled/readonly
+      fieldClasses: ['field'],
+  }));
+
+  myForm.fields.set('pet', new ZnJsForm.Field({
+      inputType: 'select',
+      label: 'Pets',
+      emptyOptionText: '--- Please choose a pet ---',
+      options: {
+          123: 'cat',
+          456: 'dog',
+      },
+      fieldClasses: ['field'],
+      // Optional field validation, does not override in-built validation for required field
+      validateFunction: function (fieldName, fieldValue, formData) {
+          // Return an array of error messages. Note that web forms return string values.
+          return (fieldValue !== '123') ? ['You must choose a cat.'] : [];
+      },
+  }));
+
+  // Modify field
+  myForm.fields.get('username').config.readonly = true;
+
+  // Validate dropdown to render errors
+  myForm.fields.get('pet').validate('pet', '456', {});
+
+  console.log(myForm.render()); // output can be set as innerHTML of some element in webpage
+</code></pre>
+</li>
+<li>
+<p>The above will produce:</p>
+<pre><code>  &lt;form name=&quot;myform&quot; method=&quot;POST&quot; action=&quot;https://example.com&quot;
+      enctype=&quot;multipart/form-data&quot; novalidate class=&quot;&quot;&gt;
+      &lt;div class=&quot;field&quot;&gt;
+          &lt;label for=&quot;username&quot; class=&quot;&quot;&gt;Username&lt;/label&gt;
+          &lt;input name=&quot;username&quot; type=&quot;text&quot; value=&quot;&quot; readonly required class=&quot;&quot;&gt;
+          &lt;div class=&quot;note&quot;&gt;This field is readonly.&lt;/div&gt;
+          &lt;div class=&quot;errors&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;field&quot;&gt;
+          &lt;label for=&quot;pet&quot; class=&quot;&quot;&gt;Pets&lt;/label&gt;
+          &lt;select name=&quot;pet&quot; class=&quot;&quot;&gt;
+              &lt;option value=&quot;&quot; selected&gt;--- Please choose a pet ---&lt;/option&gt;
+              &lt;option value=&quot;123&quot;&gt;cat&lt;/option&gt;
+              &lt;option value=&quot;456&quot;&gt;dog&lt;/option&gt;
+          &lt;/select&gt;
+          &lt;div class=&quot;errors&quot;&gt;
+              &lt;ul&gt;
+                  &lt;li&gt;You must choose a cat.&lt;/li&gt;
+              &lt;/ul&gt;
+          &lt;/div&gt;
+      &lt;/div&gt;
+  &lt;/form&gt;
+</code></pre>
+</li>
+<li>
+<p>Form validation can be done using the <code>validate()</code> method, which returns
+<code>null</code> if the form is valid or an object containing an array of error messages
+for each field if the form is invalid. Note that a field may have more than
+1 error, depending on the <code>validateFunction</code> passed via the field config.
+Values and errors are stored per field upon validation so that they will
+be populated if the form gets rendered after validation.
+Sample:</p>
+<pre><code>  // Code
+  let errors = myForm.validate({
+      username: '',
+      pet: '456',
+  });
+  console.log(errors);
+
+  // Output
+  {
+      username: [ 'This field is required.' ],
+      pet: [ 'You must choose a cat.' ]
+  }
+</code></pre>
+</li>
+<li>
+<p>No fanciful documentation for now. For more details, check the docblocks
+in the source code, especially the configuration for forms and fields in
+<code>src/Form.js:Form.prototype.config</code> and <code>src/Field.js:Field.prototype.config</code>
+respectively.</p>
+<ul>
+<li>Also look at the <code>test</code> folder. The <code>test.html</code> is an example of how
+this library can be used in a webpage (showcases fieldsets and other
+types of fields), while <code>*.test.js</code> show how it can be used in Node.js.</li>
+</ul>
+</li>
+</ul>
+<h2>Installation</h2>
+<ul>
+<li>This section is meant for developers.</li>
+<li>Clone this repository.</li>
+<li>Run <code>npm run install</code> to install dependencies.</li>
+<li>Run <code>npm run build</code> to bundle the code so that it can be used
+in a web browser. The output will be in <code>dist/bundle.js</code>.</li>
+<li>Run <code>npm run watch</code> to automatically bundle the code each time the source
+code is changed.</li>
+<li>Run <code>npm run lint</code> to do linting checks.</li>
+<li>Run <code>npm run test</code> to execute tests.</li>
+<li>Todo tasks are marked by <code>@todo</code> comments.</li>
+<li>To publish to NPM registry as a public package:
+<ul>
+<li>Login to https://www.npmjs.com
+<ul>
+<li>Go to &quot;Access Tokens&quot;.</li>
+<li>Click &quot;Generate New Token&quot;.</li>
+<li>Select &quot;Publish&quot;.</li>
+<li>Copy the token - it will not be displayed again.</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Create a <code>.npmrc</code> file in the root of the cloned repository and add the
+line <code>//registry.npmjs.org/:_authToken=YOUR-ACCESS-TOKEN</code>, replacing the
+last part with your token.</li>
+</ul>
+<ul>
+<li>Run <code>npm login</code> to login to your account on the local machine.</li>
+<li>Remove <code>&quot;private&quot;: true</code> from <code>package.json</code> if it exists.</li>
+<li>Run <code>npm publish --access public</code>. The above steps only need to be done
+once.</li>
+<li>View the published package at https://www.npmjs.com/package/zn-js-form
+and ensure that the package is public.</li>
+</ul>
+</li>
+</ul>
+<h2>Architecture</h2>
+<ul>
+<li>Entity relationships:
+<ul>
+<li>A form has 0 or more fieldsets, and has 1 or more fields.</li>
+<li>A fieldset has a legend, and has 1 or more fields.</li>
+<li>A field has a label and an input.</li>
+<li>An input can be broadly categorized into these types:
+<code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>, <code>&lt;select&gt;</code>, <code>&lt;progress&gt;</code>, <code>&lt;meter&gt;</code>.</li>
+<li>Semantically, options are different from choices. A select/checbox/radio
+presents the user with a fixed list of options but the user makes a choice
+amongst them.</li>
+</ul>
+</li>
+<li>Conventions:
+<ul>
+<li>The variables defined in a method signature are called method parameters.
+The values passed to a method when calling it are called method arguments.</li>
+<li>Note that for typical web form submissions, field values are always
+of string or array type (multiple values such as for multi-select
+checkbox groups).
+<ul>
+<li>A value of an empty string implies an empty value for a field, i.e.
+the user did not key in anything for the field.</li>
+<li>Even if a user keys in a number, it will be submitted as a string.</li>
+<li>Hence, a field would not have null/undefined/boolean values.</li>
+</ul>
+</li>
+<li>All constructors take in a single parameter of object type, which is
+the configuration.</li>
+<li>All classes have a <code>render()</code> method which takes in an object containing
+additional template variables and returns a string.</li>
+</ul>
+</li>
+<li>Workflow:
+<ul>
+<li>User runs <code>let myForm = new ZnJsForm.Form({});</code>,
+either in Node.js or in JavaScript on a web browser.</li>
+<li>Entrypoint of library, i.e. <code>ZnJsForm</code>, is <code>src/index.js</code> which exports
+an object of classes.</li>
+<li>One of the exported classes is <code>Form</code> which is loaded from <code>src/Form.js</code>.</li>
+<li>The <code>new</code> statement specifically calls the constructor defined by
+<code>function Form(config) {}</code>.</li>
+</ul>
+</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Aug 22 2021 16:56:10 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

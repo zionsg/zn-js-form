@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Fieldset.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/zionsg/zn-js-form" target="_blank" class="menu-item" id="repository" >GitHub repository</a></h2><h3>Namespaces</h3><ul><li><a href="ZnJsForm.html">ZnJsForm</a></li></ul><h3>Classes</h3><ul><li><a href="Field.html">Field</a><ul class='methods'><li data-type='method'><a href="Field.html#.newFieldconfig">new Field</a></li><li data-type='method'><a href="Field.html#render">render</a></li><li data-type='method'><a href="Field.html#validate">validate</a></li></ul></li><li><a href="Fieldset.html">Fieldset</a><ul class='methods'><li data-type='method'><a href="Fieldset.html#.newFieldsetconfig">new Fieldset</a></li><li data-type='method'><a href="Fieldset.html#render">render</a></li></ul></li><li><a href="Form.html">Form</a><ul class='methods'><li data-type='method'><a href="Form.html#.newFormconfig">new Form</a></li><li data-type='method'><a href="Form.html#clearData">clearData</a></li><li data-type='method'><a href="Form.html#getData">getData</a></li><li data-type='method'><a href="Form.html#render">render</a></li><li data-type='method'><a href="Form.html#setData">setData</a></li><li data-type='method'><a href="Form.html#validate">validate</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Fieldset.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Import modules
+const mustache = require('mustache');
+const utils = require('./utils.js');
+
+/**
+ * @class Fieldset
+ * @hideconstructor
+ */
+const Fieldset = (function () {
+    /**
+     * Constructor.
+     *
+     * @memberof Fieldset
+     * @method new Fieldset(config)
+     *
+     * @public
+     * @param {object} config - Fieldset config. See `Fieldset.prototype.config`.
+     * @returns {Fieldset}
+     */
+    function Fieldset(config) {
+        // Create new object to prevent mutation of defaults and parameter
+        // Shallow copy only
+        this.config = Object.assign({}, Fieldset.prototype.config, config || {});
+    }
+
+    /**
+     * Name of fieldset.
+     *
+     * @memberof Fieldset
+     * @instance
+     *
+     * @public
+     * @type {string}
+     */
+    Fieldset.prototype.name = '';
+
+    /**
+     * Configuration defaults for fieldset.
+     *
+     * @memberof Fieldset
+     * @instance
+     *
+     * @public
+     * @type {object}
+     * @property {string[]} fieldNames - Names of fields grouped under this fieldset. Field objects
+     *     are added to the form, not the fieldset, as it would be easier to keep track of all
+     *     the fields in the form. Hence the fieldset only saves the names of the fields in it,
+     *     not the fields themselves.
+     * @property {object} fieldsetAttributes - Key-value pairs for attributes in `&lt;fieldset>`
+     *     element. Use empty string if the attribute has no value, null to unset the attribute.
+     * @property {string[]} fieldsetClasses - List of CSS classes for `&lt;fieldset>` element.
+     * @property {string} fieldsetTemplate - Mustache.js template for rendering
+     *     HTML for fieldset element.
+     * @property {string} legend - Legend for fieldset.
+     * @property {string} name - Fieldset name. Overrides name set by form if specified.
+     */
+    Fieldset.prototype.config = {
+        fieldNames: [],
+        fieldsetAttributes: {},
+        fieldsetClasses: [],
+        fieldsetTemplate: '&lt;fieldset name="{{name}}" '
+            + '{{{fieldsetAttributes}}} class="{{{fieldsetClasses}}}">'
+            + '&lt;legend>{{legend}}&lt;/legend>'
+            + '{{{fieldsHtml}}}'
+            + '&lt;/fieldset>',
+        legend: '',
+        name: '',
+    };
+
+    /**
+     * Renders HTML for fieldset.
+     *
+     * @memberof Fieldset
+     * @instance
+     *
+     * @public
+     * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
+     *     that can be used to add on to or override current template variables.
+     * @returns {string}
+     */
+    Fieldset.prototype.render = function (templateVariables = null) {
+        return mustache.render(
+            this.config.fieldsetTemplate || '',
+            Object.assign(
+                {
+                    name: this.config.name,
+                    fieldsetAttributes: utils.attributesToString(this.config.fieldsetAttributes),
+                    fieldsetClasses: this.config.fieldsetClasses.join(' '),
+                    legend: this.config.legend,
+                },
+                templateVariables || {}
+            )
+        );
+    };
+
+    // There is no validate() method for fieldsets
+
+    return Fieldset;
+})();
+
+// JSDoc: Need to assign IIFE to variable instead of module.exports
+// and add @memberof/@instance tags to all properties/methods else docs cannot be generated
+module.exports = Fieldset;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Aug 22 2021 16:56:10 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
