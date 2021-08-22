@@ -6,6 +6,13 @@ JavaScript on web browsers.
 Paths in all documentation, even those in subfolders, are relative to the root
 of the repository. Shell commands are all run from the root of the repository.
 
+## Sections
+- [References](#references)
+- [Changelog](#changelog)
+- [Usage](#usage)
+- [Installation](#installation)
+- [Architecture](#architecture)
+
 ## References
 - [Mustache.js](https://github.com/janl/mustache.js): This templating library
   is used for rendering HTML for the form and its components.
@@ -23,6 +30,11 @@ of the repository. Shell commands are all run from the root of the repository.
 - See `CHANGELOG.md`. Note that changes are only documented from v1.0.0 onwards.
 
 ## Usage
+- Open `docs/jsdoc/index.html` in a web browser to view the generated JSDoc
+  documentation.
+    + Also look at the `test` folder. The `test.html` is an example of how
+      this library can be used in a webpage (showcases fieldsets and other
+      types of fields), while `*.test.js` show how it can be used in Node.js.
 - For Node.js:
     + Run `npm install zn-js-form` to install the package.
     + Import the module, e.g. `const ZnJsForm = require('zn-js-form');`.
@@ -123,14 +135,6 @@ of the repository. Shell commands are all run from the root of the repository.
             username: [ 'This field is required.' ],
             pet: [ 'You must choose a cat.' ]
         }
-
-- No fanciful documentation for now. For more details, check the docblocks
-  in the source code, especially the configuration for forms and fields in
-  `src/Form.js:Form.prototype.config` and `src/Field.js:Field.prototype.config`
-  respectively.
-    + Also look at the `test` folder. The `test.html` is an example of how
-      this library can be used in a webpage (showcases fieldsets and other
-      types of fields), while `*.test.js` show how it can be used in Node.js.
 
 ## Installation
 - This section is meant for developers.
