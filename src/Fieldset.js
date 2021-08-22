@@ -32,7 +32,10 @@ module.exports = (function () {
      *
      * @public
      * @type {object}
-     * @property {string[]} fieldNames - Names of fields grouped under this fieldset.
+     * @property {string[]} fieldNames - Names of fields grouped under this fieldset. Field objects
+     *     are added to the form, not the fieldset, as it would be easier to keep track of all
+     *     the fields in the form. Hence the fieldset only saves the names of the fields in it,
+     *     not the fields themselves.
      * @property {object} fieldsetAttributes - Key-value pairs for attributes in <fieldset> element
      *     Use empty string if the attribute has no value, null to unset the attribute.
      * @property {string[]} fieldsetClasses - List of CSS classes for <fieldset> element.
@@ -57,8 +60,9 @@ module.exports = (function () {
     /**
      * Renders HTML for fieldset
      *
-     * @param {object} templateVariables - Optional key-value pairs that can
-     *     be used to add on to or override current template variables.
+     * @public
+     * @param {(null|object)} [templateVariables=null] - Optional key-value pairs
+     *     that can be used to add on to or override current template variables.
      * @returns {string}
      */
     Fieldset.prototype.render = function (templateVariables = null) {
