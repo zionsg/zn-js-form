@@ -30,8 +30,9 @@ of the repository. Shell commands are all run from the root of the repository.
 - See `CHANGELOG.md`. Note that changes are only documented from v1.0.0 onwards.
 
 ## Usage
-- Open `docs/jsdoc/index.html` in a web browser to view the generated JSDoc
-  documentation.
+- Visit https://zionsg.github.io/zn-js-form/jsdoc to view the generated JSDoc
+  documentation (which are in `docs/jsdoc` folder and served via GitHub Pages
+  pointing to `docs/index.html`).
     + Also look at the `test` folder. The `test.html` is an example of how
       this library can be used in a webpage (showcases fieldsets and other
       types of fields), while `*.test.js` show how it can be used in Node.js.
