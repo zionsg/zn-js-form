@@ -15,7 +15,8 @@
       "The `--standalone ZnJsForm` option for browserify/watchify exposes the exported object as a global JS variable."
     ],
     "build": "gulp build",
-    "lint": "eslint '**/*.js' --ignore-pattern 'dist/' --ignore-pattern 'test/' --ignore-pattern 'node_modules/' --ignore-pattern '*.min.js' --ignore-pattern gulpfile.js",
+    "doc": "jsdoc --configure jsdoc.json",
+    "lint": "eslint '**/*.js' --ignore-pattern 'dist/' --ignore-pattern 'docs/' --ignore-pattern 'node_modules/' --ignore-pattern 'test/' --ignore-pattern '*.min.js' --ignore-pattern gulpfile.js",
     "test": "jest test/*.test.js --detectOpenHandles",
     "watch": "gulp watch"
   },
@@ -26,10 +27,12 @@
     "@jsdevtools/browserify-banner": "^2.0.4",
     "browserify": "^17.0.0",
     "del": "^6.0.0",
+    "docdash": "^1.2.0",
     "eslint": "^6.3.0",
     "gulp": "^4.0.2",
     "gulp-babel-minify": "^0.5.1",
     "jest": "^27.0.6",
+    "jsdoc": "^3.6.7",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
   },

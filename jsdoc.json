@@ -1,0 +1,46 @@
+{
+  "source": {
+    "includePattern": ".+.js",
+    "include": [
+      "src"
+    ]
+  },
+  "opts": {
+    "access": "all",
+    "destination": "./docs/jsdoc",
+    "readme": "README.md",
+    "recurse": true,
+    "template": "node_modules/docdash"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "templates": {
+    "default": {
+      "useLongnameInNav": true
+    }
+  },
+  "docdash": {
+    "collapse": false,
+    "private": false,
+    "removeQuotes": "none",
+    "search": true,
+    "sort": true,
+    "static": true,
+    "typedefs": true,
+    "scripts": [],
+    "sectionOrder": [
+      "Namespaces",
+      "Modules",
+      "Classes"
+    ],
+    "menu": {
+      "GitHub repository": {
+        "href": "https://github.com/zionsg/zn-js-form",
+        "target": "_blank",
+        "class": "menu-item",
+        "id": "repository"
+      }
+    }
+  }
+}
