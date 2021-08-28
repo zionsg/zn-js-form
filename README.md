@@ -26,6 +26,12 @@ of the repository. Shell commands are all run from the root of the repository.
     + [ZnZend Form](https://github.com/zionsg/ZnZend/tree/master/src/Form):
       Form component of library for Zend Framework 2.
 
+## Requirements
+- [Node.js](https://nodejs.org/) >= 14.17.3 (includes npm 6.14.13).
+- [Google Chrome](https://www.google.com/intl/en_sg/chrome/) >= 80.
+- `?.` optional chaining and `??` nullish coalescing operator used in
+  source code are only supported from Node.js 14 and Chrome 80 onwards.
+
 ## Changelog
 - See `CHANGELOG.md`. Note that changes are only documented from v1.0.0 onwards.
 
