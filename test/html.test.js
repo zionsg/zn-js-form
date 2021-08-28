@@ -7,20 +7,22 @@ const utils = require('../src/utils.js');
  */
 describe('Mimic test.html', () => {
 
-    it('Render same HTMl as test.html', () => {
+    it('Render same HTML as test.html', () => {
         let myForm = new ZnJsForm.Form({
-              name: 'myform',
-              action: 'https://example.com',
-              attributes: {
-                  enctype: 'multipart/form-data',
-                  novalidate: '', // attribute set with no value if empty string
-                  required: null, // attribute not set if value is null
-                  onsubmit: 'submitHandler(event)', // validate form on client-side upon submission
-              },
+            name: 'myform',
+            action: 'https://example.com',
+            attributes: {
+                enctype: 'multipart/form-data',
+                novalidate: '', // attribute set with no value if empty string
+                required: null, // attribute not set if value is null
+                onsubmit: 'submitHandler(event)', // validate form on client-side upon submission
+            },
         });
         let submitHandler = function (event) {
             event.preventDefault(); // don't submit form to action url
 
+            // Note `myForm` doesn't automatically save the values as the fields are being changed
+            // hence this loop to simulate the actual submission of the HTML form
             // See https://developer.mozilla.org/en-US/docs/Web/API/FormData
             let formData = new FormData(event.srcElement);
             let submission = {};
@@ -135,7 +137,7 @@ describe('Mimic test.html', () => {
 
         // Fieldsets
         myForm.fieldsets.set('fieldset-for-personal-info', new ZnJsForm.Fieldset({
-            fieldNames: ['username', 'gender'],
+            fieldNames: ['username', 'gender', 'advanced_field'],
             legend: 'Personal Info',
         }));
         myForm.fieldsets.set('fieldset-for-remaining-fields', new ZnJsForm.Fieldset({
@@ -149,10 +151,47 @@ describe('Mimic test.html', () => {
         // Validate dropdown to render errors
         myForm.fields.get('pet').validate('pet', '456', {});
 
+        // Advanced field example
+        myForm.config.inputTemplates['ifEditModeShowDropdownElseShowDisabledInput'] = `
+            {{^editMode}}
+              <input name="{{name}}" type="text" value="{{selectedOptionText}} (id:{{value}})"
+                {{{attributes}}} class="{{{classes}}}" disabled />
+            {{/editMode}}
+            {{#editMode}}
+              <select name="{{name}}" {{{attributes}}} class="{{{classes}}}">
+                <option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>
+                  {{emptyOptionText}}</option>
+                {{#options}}
+                  <option value="{{optionValue}}"
+                    {{#optionSelected}}selected{{/optionSelected}}>{{optionText}}</option>
+                {{/options}}
+              </select>
+            {{/editMode}}
+        `;
+        myForm.fields.set('advanced_field', new ZnJsForm.Field({
+            inputType: 'ifEditModeShowDropdownElseShowDisabledInput',
+            label: 'Advanced Field',
+            value: 123,
+            note: '(if editMode template variable passed to render() is true, show dropdown, else show disabled input)',
+            noteClasses: ['note'],
+            options: {
+                123: 'Cycling',
+                456: 'Running',
+            },
+        }));
+
+        let formHtml = myForm.render({
+            editMode: false,
+        });
+
         // Single assertion
-        expect(utils.stripWhitespace(myForm.render(), true)).toBe(utils.stripWhitespace(`
+        expect(utils.stripWhitespace(formHtml, true)).toBe(utils.stripWhitespace(`
             <form name="myform" method="POST" action="https://example.com" enctype="multipart/form-data" novalidate onsubmit="submitHandler(event)" class=""><fieldset name="fieldset-for-personal-info"  class=""><legend>Personal Info</legend><div  class="field"><label for="username"  class="">Username</label><input name="username" type="text" value="" readonly required class="" /><div class="note">This field is readonly.</div><div class="errors"></div></div>
             <div  class="field"><label for="gender"  class="">Gender</label><input name="gender" type="radio" value="123" required  class="" />Female<input name="gender" type="radio" value="456" required  class="" />Male<div class="errors"></div></div>
+            <div  class=""><label for="advanced_field"  class="">Advanced Field</label>
+                          <input name="advanced_field" type="text" value="Cycling (id:123)"
+                             class="" disabled />
+                    <div class="note">(if editMode template variable passed to render() is true, show dropdown, else show disabled input)</div><div class="errors"></div></div>
             </fieldset><fieldset name="fieldset-for-remaining-fields"  class="noborder"><legend></legend>
                             <p style="font-family:monospace; font-size:1.5em;">
                               This is a field of "html" type which allows insertion of HTML in between fields.

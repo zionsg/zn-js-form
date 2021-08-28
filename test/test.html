@@ -152,7 +152,7 @@
 
         // Fieldsets
         myForm.fieldsets.set('fieldset-for-personal-info', new ZnJsForm.Fieldset({
-            fieldNames: ['username', 'gender'],
+            fieldNames: ['username', 'gender', 'advanced_field'],
             legend: 'Personal Info',
         }));
         myForm.fieldsets.set('fieldset-for-remaining-fields', new ZnJsForm.Fieldset({
@@ -166,7 +166,38 @@
         // Validate dropdown to render errors
         myForm.fields.get('pet').validate('pet', '456', {});
 
-        let formHtml = myForm.render();
+        // Advanced field example
+        myForm.config.inputTemplates['ifEditModeShowDropdownElseShowDisabledInput'] = `
+            {{^editMode}}
+              <input name="{{name}}" type="text" value="{{selectedOptionText}} (id:{{value}})"
+                {{{attributes}}} class="{{{classes}}}" disabled />
+            {{/editMode}}
+            {{#editMode}}
+              <select name="{{name}}" {{{attributes}}} class="{{{classes}}}">
+                <option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>
+                  {{emptyOptionText}}</option>
+                {{#options}}
+                  <option value="{{optionValue}}"
+                    {{#optionSelected}}selected{{/optionSelected}}>{{optionText}}</option>
+                {{/options}}
+              </select>
+            {{/editMode}}
+        `;
+        myForm.fields.set('advanced_field', new ZnJsForm.Field({
+            inputType: 'ifEditModeShowDropdownElseShowDisabledInput',
+            label: 'Advanced Field',
+            value: 123,
+            note: '(if editMode template variable passed to render() is true, show dropdown, else show disabled input)',
+            noteClasses: ['note'],
+            options: {
+                123: 'Cycling',
+                456: 'Running',
+            },
+        }));
+
+        let formHtml = myForm.render({
+            editMode: false,
+        });
         console.log('Rendered form:', formHtml);
         container.innerHTML = formHtml;
     </script>
