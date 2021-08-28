@@ -1,6 +1,6 @@
 /*!
- * zn-js-form v0.4.1 https://github.com/zionsg/zn-js-form
- * 2021-08-28T15:42:15+08:00
+ * zn-js-form v0.5.0 https://github.com/zionsg/zn-js-form
+ * 2021-08-28T16:07:01+08:00
  */(function(a){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=a();else if("function"==typeof define&&define.amd)define([],a);else{var b;b="undefined"==typeof window?"undefined"==typeof global?"undefined"==typeof self?this:self:global:window,b.ZnJsForm=a()}})(function(){var a;return function(){function b(d,e,g){function a(j,i){if(!e[j]){if(!d[j]){var f="function"==typeof require&&require;if(!i&&f)return f(j,!0);if(h)return h(j,!0);var c=new Error("Cannot find module '"+j+"'");throw c.code="MODULE_NOT_FOUND",c}var k=e[j]={exports:{}};d[j][0].call(k.exports,function(b){var c=d[j][1][b];return a(c||b)},k,k.exports,b,d,e,g)}return e[j].exports}for(var h="function"==typeof require&&require,c=0;c<g.length;c++)a(g[c]);return a}return b}()({1:[function(b,c,d){(function(b,e){"object"==typeof d&&"undefined"!=typeof c?c.exports=e():"function"==typeof a&&a.amd?a(e):(b=b||self,b.Mustache=e())})(this,function(){'use strict';/*!
    * mustache.js - Logic-less {{mustache}} templates with JavaScript
    * http://github.com/janl/mustache.js
