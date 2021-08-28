@@ -50,8 +50,9 @@ const Field = (function () {
      * @property {string} inputTemplate - Mustache.js template for rendering
      *     HTML for input element. For dropdowns/checkboxes/radio buttons, the following template
      *     variables are available: `hasSelectedOption` (indicates if an option is selected),
-     *     `emptyOptionText` (the text for the option with empty value) and `options` (an array
-     *     of objects, each having the keys `optionValue`, `optionText` and `optionSelected`).
+     *     `emptyOptionText` (the text for the option with empty value), `selectedOptionText` (the
+     *     text for the selected option if any) and `options` (an array of objects, each having the
+     *     keys `optionValue`, `optionText` and `optionSelected`).
      * @property {string} inputType - Type of input, e.g. text, select, textarea, radio, checkbox.
      * @property {string} label - Label for field.
      * @property {object} labelAttributes - Key-value pairs for attributes in

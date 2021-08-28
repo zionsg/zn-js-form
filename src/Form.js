@@ -49,7 +49,8 @@ const Form = (function () {
      *     field config. For dropdowns/checkboxes/radio buttons, the following
      *     template variables are available: `hasSelectedOption` (indicates if
      *     an option is selected), `emptyOptionText` (the text for the option
-     *     with empty value) and `options` (an array of objects, each having the
+     *     with empty value), `selectedOptionText` (the text for the selected
+     *     option if any) and `options` (an array of objects, each having the
      *     keys `optionValue`, `optionText` and `optionSelected`).
      * @property {string} method - HTTP method for form submission.
      * @property {string} name - Form name.
