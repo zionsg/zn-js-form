@@ -197,21 +197,21 @@ of the repository. Shell commands are all run from the root of the repository.
     + `npm run test`: Execute tests.
 - To publish to NPM registry as a public package:
     + Update the application version:
-        + Update `version` key in `package.json`..
-        + Update version in `package-lock.json` by running `npm install --package-lock-only`.
-        + Update the bundle script by running `npm run build`.
-    + Login to https://www.npmjs.com
-        * Go to "Access Tokens".
-        * Click "Generate New Token".
-        * Select "Publish".
-        * Copy the token - it will not be displayed again.
-    - Create a `.npmrc` file in the root of the cloned repository and add the
-      line `//registry.npmjs.org/:_authToken=YOUR-ACCESS-TOKEN`, replacing the
-      last part with your token.
-    + Run `npm login` to login to your account on the local machine.
-    + Remove `"private": true` from `package.json` if it exists.
-    + Run `npm publish --access public`. The above steps only need to be done
-      once.
+        * Update `version` key in `package.json`..
+        * Update version in `package-lock.json` by running `npm install --package-lock-only`.
+        * Update the bundle script by running `npm run build`.
+    + This part only needs to be done once.
+        * Login to https://www.npmjs.com
+            - Go to "Access Tokens".
+            - Click "Generate New Token".
+            - Select "Publish".
+            - Copy the token - it will not be displayed again.
+        * Create a `.npmrc` file in the root of the cloned repository and add the
+          line `//registry.npmjs.org/:_authToken=YOUR-ACCESS-TOKEN`, replacing the
+          last part with your token.
+        * Run `npm login` to login to your account on the local machine.
+        * Remove `"private": true` from `package.json` if it exists.
+    + Run `npm publish --access public`.
     + View the published package at https://www.npmjs.com/package/zn-js-form
       and ensure that the package is public.
 
