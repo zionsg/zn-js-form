@@ -82,14 +82,15 @@ const Fieldset = (function () {
         // Resolve values for special keys that may be passed in via templateVariables
         // Values from fieldset config will override those from templateVariables
         templateVariables = templateVariables || {};
-        let name = this.config.name || templateVariables.name || '';
+        let name = this.config.name || templateVariables?.fallback?.name || '';
 
         return mustache.render(
             this.config.fieldsetTemplate || '',
             Object.assign(
                 {
                     name: name,
-                    fieldsetAttributes: utils.attributesToString(this.config.fieldsetAttributes),
+                    fieldsetAttributes:
+                        utils.attributesToString(this.config.fieldsetAttributes),
                     fieldsetClasses: this.config.fieldsetClasses.join(' '),
                     legend: this.config.legend,
                 },

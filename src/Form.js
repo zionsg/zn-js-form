@@ -209,15 +209,21 @@ const Form = (function () {
         // and index by the field names, for use with fieldsets
         let htmlByField = {};
         this.fields.forEach(function (field, fieldName) {
-            // Note that if the template variables passed in here are only
-            // fallbacks, i.e. if the field config has these keys specified,
-            // the values from the field config will override these values.
-            htmlByField[fieldName] = field.render({
-                name: fieldName,
-                errorsTemplate: self.config.errorsTemplate,
-                inputTemplate: self.config.inputTemplates[field.config.inputType]
-                    || self.config.inputTemplates['input'],
-            });
+            // Note that the values from the field config will
+            // override the values for the same keys in the fallback
+            // template variable.
+            htmlByField[fieldName] = field.render(Object.assign(
+                {
+                    fallback: {
+                        name: fieldName,
+                        errorsTemplate: self.config.errorsTemplate,
+                        inputTemplate:
+                            self.config.inputTemplates[field.config.inputType]
+                            || self.config.inputTemplates['input'],
+                    }
+                },
+                templateVariables || {}
+            ));
         });
 
         // Render all fields if there are no fieldsets, else render fieldsets only
@@ -236,10 +242,15 @@ const Form = (function () {
                 // fallbacks, i.e. if the fieldset config has these keys
                 // specified, the values from the fieldset config will
                 // override these values.
-                formHtml += fieldset.render({
-                    name: fieldsetName,
-                    fieldsHtml: fieldsHtml,
-                });
+                formHtml += fieldset.render(Object.assign(
+                    {
+                        fieldsHtml: fieldsHtml,
+                        fallback: {
+                            name: fieldsetName,
+                        },
+                    },
+                    templateVariables || {}
+                ));
             });
         }
 

@@ -148,13 +148,16 @@ const Field = (function () {
         // Resolve values for special keys that may be passed in via templateVariables
         // Values from field config will override those from templateVariables
         templateVariables = templateVariables || {};
-        let name = this.config.name || templateVariables.name || '';
-        let errorsTemplate = this.config.errorsTemplate || templateVariables.errorsTemplate || '';
-        let inputTemplate = this.config.inputTemplate || templateVariables.inputTemplate || '';
+        let name = this.config.name || templateVariables?.fallback?.name;
+        let errorsTemplate = this.config.errorsTemplate
+            || templateVariables?.fallback?.errorsTemplate;
+        let inputTemplate = this.config.inputTemplate
+            || templateVariables?.fallback?.inputTemplate;
 
         // Handling for select/checkbox/radio fields. May have multiple values passed as array.
         let selectOptions = [];
         let hasSelectedOption = false;
+        let selectedOptionText = '';
         let values = self.value || self.config.value;
         if ([null, undefined, ''].includes(values)) { // cannot use `if (!values)` cos values may be 0 or false
             values = [];
@@ -166,6 +169,7 @@ const Field = (function () {
             let isSelected = values.includes(optionValue.toString()); // need to cast to string else may not work
             if (isSelected) {
                 hasSelectedOption = true;
+                selectedOptionText = self.config.options[optionValue];
             }
 
             selectOptions.push({ // keys correspond to Mustache.js template variables
@@ -177,32 +181,39 @@ const Field = (function () {
 
         // Input element
         let inputHtml = mustache.render(
-            inputTemplate,
-            {
-                name: name,
-                type: this.config.inputType,
-                attributes: utils.attributesToString(Object.assign(
-                    {
-                        disabled: this.config.disabled ? '' : null,
-                        readonly: this.config.readonly ? '' : null,
-                        required: this.config.required ? '' : null,
-                    },
-                    this.config.inputAttributes || {},
-                )),
-                classes: this.config.inputClasses.join(' '),
-                emptyOptionText: this.config.emptyOptionText,
-                hasSelectedOption: hasSelectedOption,
-                options: selectOptions,
-                value: this.value || this.config.value, // current value, then default value as fallback
-            }
+            inputTemplate || '',
+            Object.assign(
+                {
+                    name: name,
+                    type: this.config.inputType,
+                    attributes: utils.attributesToString(Object.assign(
+                        {
+                            disabled: this.config.disabled ? '' : null,
+                            readonly: this.config.readonly ? '' : null,
+                            required: this.config.required ? '' : null,
+                        },
+                        this.config.inputAttributes || {},
+                    )),
+                    classes: this.config.inputClasses.join(' '),
+                    emptyOptionText: this.config.emptyOptionText,
+                    hasSelectedOption: hasSelectedOption,
+                    options: selectOptions,
+                    selectedOptionText: selectedOptionText,
+                    value: this.value || this.config.value, // current value, then default value as fallback
+                },
+                templateVariables || {}
+            )
         );
 
         // Errors
         let errorsHtml = mustache.render(
-            errorsTemplate,
-            {
-                errors: this.errors,
-            }
+            errorsTemplate || '',
+            Object.assign(
+                {
+                    errors: this.errors,
+                },
+                templateVariables || {}
+            )
         );
 
         return mustache.render(
