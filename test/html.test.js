@@ -42,7 +42,8 @@ describe('Mimic test.html', () => {
             let errors = myForm.validate(submission);
             container.innerHTML = myForm.render(); // render form again after validation
 
-            console.log('Form submission and errors:', submission, errors);
+            console.log('Form submission:', submission);
+            console.log('Form errors:', errors);
             if (!errors) {
                 alert('Congrats, your form submission is valid!');
             }

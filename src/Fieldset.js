@@ -79,11 +79,16 @@ const Fieldset = (function () {
      * @returns {string}
      */
     Fieldset.prototype.render = function (templateVariables = null) {
+        // Resolve values for special keys that may be passed in via templateVariables
+        // Values from fieldset config will override those from templateVariables
+        templateVariables = templateVariables || {};
+        let name = this.config.name || templateVariables.name || '';
+
         return mustache.render(
             this.config.fieldsetTemplate || '',
             Object.assign(
                 {
-                    name: this.config.name,
+                    name: name,
                     fieldsetAttributes: utils.attributesToString(this.config.fieldsetAttributes),
                     fieldsetClasses: this.config.fieldsetClasses.join(' '),
                     legend: this.config.legend,

@@ -209,21 +209,15 @@ const Form = (function () {
         // and index by the field names, for use with fieldsets
         let htmlByField = {};
         this.fields.forEach(function (field, fieldName) {
-            // Not exactly best practice to mutate the field object but
-            // it will be non-trivial to resolve the values in other ways
-            field.config.name = field.config.name || fieldName;
-
-            field.config.errorsTemplate = field.config.errorsTemplate
-                || self.config.errorsTemplate;
-
-            field.config.inputTemplate = field.config.inputTemplate
-                || self.config.inputTemplates[field.config.inputType]
-                || self.config.inputTemplates['input'];
-
-            field.config.requiredText = field.config.requiredText
-                || self.config.requiredText;
-
-            htmlByField[fieldName] = field.render();
+            // Note that if the template variables passed in here are only
+            // fallbacks, i.e. if the field config has these keys specified,
+            // the values from the field config will override these values.
+            htmlByField[fieldName] = field.render({
+                name: fieldName,
+                errorsTemplate: self.config.errorsTemplate,
+                inputTemplate: self.config.inputTemplates[field.config.inputType]
+                    || self.config.inputTemplates['input'],
+            });
         });
 
         // Render all fields if there are no fieldsets, else render fieldsets only
@@ -233,16 +227,19 @@ const Form = (function () {
             formHtml = Object.values(htmlByField).join('\n');
         } else {
             this.fieldsets.forEach(function (fieldset, fieldsetName) {
-                // Not exactly best practice to mutate the fieldset object but
-                // it will be non-trivial to resolve the values in other ways
-                fieldset.config.name = fieldset.config.name || fieldsetName;
-
                 let fieldsHtml = '';
                 fieldset.config.fieldNames.forEach(function (fieldName) {
                     fieldsHtml += (htmlByField[fieldName] || '') + '\n';
                 });
 
-                formHtml += fieldset.render({ fieldsHtml: fieldsHtml });
+                // Note that if the template variables passed in here are only
+                // fallbacks, i.e. if the fieldset config has these keys
+                // specified, the values from the fieldset config will
+                // override these values.
+                formHtml += fieldset.render({
+                    name: fieldsetName,
+                    fieldsHtml: fieldsHtml,
+                });
             });
         }
 
@@ -324,7 +321,13 @@ const Form = (function () {
         let errors = {};
         let hasErrors = false;
         this.fields.forEach((field, fieldName) => {
-            let fieldErrors = field.validate(fieldName, formData[fieldName], formData);
+            let fieldErrors = field.validate(
+                fieldName,
+                formData[fieldName],
+                formData,
+                this.config.requiredText
+            );
+
             if (fieldErrors.length > 0) {
                 hasErrors = true;
                 errors[fieldName] = fieldErrors;

@@ -64,8 +64,7 @@ const Field = (function () {
      * @property {boolean} required - Whether this field is required. In-built validation if this
      *     is true and field is not disabled/readonly.
      * @property {string} requiredText - Text to return for error message if value is empty for
-     *     required field. Default is empty string as Form.config.requiredText can be set to
-     *     provide a global value for all fields.
+     *     required field. Overrides required text set by form if specified.
      * @property {string|number|array} value - Default value for input. Use an array if input has
      *     multiple values, e.g. multi-select checkbox group. Note that field values in web form
      *     submissions are always of string type, hence no catering for null/undefined/boolean types.
@@ -146,6 +145,13 @@ const Field = (function () {
     Field.prototype.render = function (templateVariables = null) {
         let self = this; // for use inside callbacks
 
+        // Resolve values for special keys that may be passed in via templateVariables
+        // Values from field config will override those from templateVariables
+        templateVariables = templateVariables || {};
+        let name = this.config.name || templateVariables.name || '';
+        let errorsTemplate = this.config.errorsTemplate || templateVariables.errorsTemplate || '';
+        let inputTemplate = this.config.inputTemplate || templateVariables.inputTemplate || '';
+
         // Handling for select/checkbox/radio fields. May have multiple values passed as array.
         let selectOptions = [];
         let hasSelectedOption = false;
@@ -171,9 +177,9 @@ const Field = (function () {
 
         // Input element
         let inputHtml = mustache.render(
-            this.config.inputTemplate || '',
+            inputTemplate,
             {
-                name: this.config.name,
+                name: name,
                 type: this.config.inputType,
                 attributes: utils.attributesToString(Object.assign(
                     {
@@ -193,7 +199,7 @@ const Field = (function () {
 
         // Errors
         let errorsHtml = mustache.render(
-            this.config.errorsTemplate || '',
+            errorsTemplate,
             {
                 errors: this.errors,
             }
@@ -203,7 +209,7 @@ const Field = (function () {
             this.config.fieldTemplate || '',
             Object.assign(
                 {
-                    name: this.config.name,
+                    name: name,
                     fieldAttributes: utils.attributesToString(this.config.fieldAttributes),
                     fieldClasses: this.config.fieldClasses.join(' '),
                     label: this.config.label,
@@ -236,12 +242,17 @@ const Field = (function () {
      *     where the key is the field name and the value is the submitted value.
      *     This is passed in as the field may depend on the values of other
      *     fields in the form.
+     * @param {string} requiredText - Optional required text that is used as
+     *     fallback if it is not set in field config.
      * @returns {string[]} Empty array returned if field is valid, else array
      *     of error messages is returned. There may be more than 1 error
      *     message hence an array.
      */
-    Field.prototype.validate = function (fieldName, fieldValue, formData) {
+    Field.prototype.validate = function (fieldName, fieldValue, formData, requiredText = '') {
         let errors = [];
+
+        // Value from field config will override value passed in
+        requiredText = this.config.requiredText || requiredText;
 
         // In-built validation for required check
         if (this.config.required) {
@@ -249,7 +260,7 @@ const Field = (function () {
             if (!this.config.disabled && !this.config.readonly
                 && ['', undefined, null].includes(fieldValue) // does not check array or {}
             ) {
-                errors.push(this.config.requiredText);
+                errors.push(requiredText);
             }
         }
 
