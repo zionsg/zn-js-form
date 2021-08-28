@@ -143,6 +143,44 @@ of the repository. Shell commands are all run from the root of the repository.
             pet: [ 'You must choose a cat.' ]
         }
 
+- Advanced field example. Render a field as dropdown in edit mode and render as
+  a disabled input field if not in edit mode. The edit mode can be indicated
+  via a boolean template variable, e.g. `editMode`, passed to `render()`.
+  Sample code:
+
+        myForm.config.inputTemplates['ifEditModeShowDropdownElseShowDisabledInput'] = `
+            {{^editMode}}
+                <input name="{{name}}" type="text" value="{{selectedOptionText}} (id:{{value}})"
+                    {{{attributes}}} class="{{{classes}}}" disabled />
+            {{/editMode}}
+            {{#editMode}}
+                <select name="{{name}}" {{{attributes}}} class="{{{classes}}}">
+                    <option value="" {{^hasSelectedOption}}selected{{/hasSelectedOption}}>
+                        {{emptyOptionText}}</option>
+                    {{#options}}
+                        <option value="{{optionValue}}"
+                            {{#optionSelected}}selected{{/optionSelected}}>{{optionText}}</option>
+                    {{/options}}
+                </select>
+            {{/editMode}}
+        `;
+
+        myForm.fields.set('advanced_field', new ZnJsForm.Field({
+            inputType: 'ifEditModeShowDropdownElseShowDisabledInput',
+            label: 'Advanced Field',
+            value: 123,
+            note: '(if editMode template variable passed to render() is true, show dropdown, else show disabled input)',
+            noteClasses: ['note'],
+            options: {
+                123: 'Cycling',
+                456: 'Running',
+            },
+        }));
+
+        myForm.render({
+            editMode: false,
+        });
+
 ## Installation
 - This section is meant for developers. Todo tasks are marked by `@todo` comments.
 - Clone this repository.

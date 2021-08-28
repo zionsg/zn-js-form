@@ -46,7 +46,11 @@ const Form = (function () {
      *     type (e.g. text, select) and value is Mustache.js template for
      *     rendering HTML for input element. The appropriate input template is
      *     used when rendering the input for a field and may be overridden in
-     *     field config.
+     *     field config. For dropdowns/checkboxes/radio buttons, the following
+     *     template variables are available: `hasSelectedOption` (indicates if
+     *     an option is selected), `emptyOptionText` (the text for the option
+     *     with empty value) and `options` (an array of objects, each having the
+     *     keys `optionValue`, `optionText` and `optionSelected`).
      * @property {string} method - HTTP method for form submission.
      * @property {string} name - Form name.
      * @property {string} requiredText - Text to return for error message if
@@ -298,8 +302,8 @@ const Form = (function () {
      * This is to aid when rendering the form after validation.
      *
      * The method signature allows the validation of a form submission in one
-     * line instead of having to call form.setData() each time before calling
-     * form.validate(). Example scenario in an Express app:
+     * line instead of having to call `form.setData()` each time before calling
+     * `form.validate()`. Example scenario in an Express app:
      *
      *     // If need form.setData() then code for response will be duplicated
      *     if ('GET' === request.method

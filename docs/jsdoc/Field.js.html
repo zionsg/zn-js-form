@@ -94,7 +94,10 @@ const Field = (function () {
      *     unset the attribute.
      * @property {string[]} inputClasses - List of CSS classes for input element.
      * @property {string} inputTemplate - Mustache.js template for rendering
-     *     HTML for input element.
+     *     HTML for input element. For dropdowns/checkboxes/radio buttons, the following template
+     *     variables are available: `hasSelectedOption` (indicates if an option is selected),
+     *     `emptyOptionText` (the text for the option with empty value) and `options` (an array
+     *     of objects, each having the keys `optionValue`, `optionText` and `optionSelected`).
      * @property {string} inputType - Type of input, e.g. text, select, textarea, radio, checkbox.
      * @property {string} label - Label for field.
      * @property {object} labelAttributes - Key-value pairs for attributes in
@@ -110,8 +113,7 @@ const Field = (function () {
      * @property {boolean} required - Whether this field is required. In-built validation if this
      *     is true and field is not disabled/readonly.
      * @property {string} requiredText - Text to return for error message if value is empty for
-     *     required field. Default is empty string as Form.config.requiredText can be set to
-     *     provide a global value for all fields.
+     *     required field. Overrides required text set by form if specified.
      * @property {string|number|array} value - Default value for input. Use an array if input has
      *     multiple values, e.g. multi-select checkbox group. Note that field values in web form
      *     submissions are always of string type, hence no catering for null/undefined/boolean types.
@@ -192,9 +194,19 @@ const Field = (function () {
     Field.prototype.render = function (templateVariables = null) {
         let self = this; // for use inside callbacks
 
+        // Resolve values for special keys that may be passed in via templateVariables
+        // Values from field config will override those from templateVariables
+        templateVariables = templateVariables || {};
+        let name = this.config.name || templateVariables?.fallback?.name;
+        let errorsTemplate = this.config.errorsTemplate
+            || templateVariables?.fallback?.errorsTemplate;
+        let inputTemplate = this.config.inputTemplate
+            || templateVariables?.fallback?.inputTemplate;
+
         // Handling for select/checkbox/radio fields. May have multiple values passed as array.
         let selectOptions = [];
         let hasSelectedOption = false;
+        let selectedOptionText = '';
         let values = self.value || self.config.value;
         if ([null, undefined, ''].includes(values)) { // cannot use `if (!values)` cos values may be 0 or false
             values = [];
@@ -206,6 +218,7 @@ const Field = (function () {
             let isSelected = values.includes(optionValue.toString()); // need to cast to string else may not work
             if (isSelected) {
                 hasSelectedOption = true;
+                selectedOptionText = self.config.options[optionValue];
             }
 
             selectOptions.push({ // keys correspond to Mustache.js template variables
@@ -217,39 +230,46 @@ const Field = (function () {
 
         // Input element
         let inputHtml = mustache.render(
-            this.config.inputTemplate || '',
-            {
-                name: this.config.name,
-                type: this.config.inputType,
-                attributes: utils.attributesToString(Object.assign(
-                    {
-                        disabled: this.config.disabled ? '' : null,
-                        readonly: this.config.readonly ? '' : null,
-                        required: this.config.required ? '' : null,
-                    },
-                    this.config.inputAttributes || {},
-                )),
-                classes: this.config.inputClasses.join(' '),
-                emptyOptionText: this.config.emptyOptionText,
-                hasSelectedOption: hasSelectedOption,
-                options: selectOptions,
-                value: this.value || this.config.value, // current value, then default value as fallback
-            }
+            inputTemplate || '',
+            Object.assign(
+                {
+                    name: name,
+                    type: this.config.inputType,
+                    attributes: utils.attributesToString(Object.assign(
+                        {
+                            disabled: this.config.disabled ? '' : null,
+                            readonly: this.config.readonly ? '' : null,
+                            required: this.config.required ? '' : null,
+                        },
+                        this.config.inputAttributes || {},
+                    )),
+                    classes: this.config.inputClasses.join(' '),
+                    emptyOptionText: this.config.emptyOptionText,
+                    hasSelectedOption: hasSelectedOption,
+                    options: selectOptions,
+                    selectedOptionText: selectedOptionText,
+                    value: this.value || this.config.value, // current value, then default value as fallback
+                },
+                templateVariables || {}
+            )
         );
 
         // Errors
         let errorsHtml = mustache.render(
-            this.config.errorsTemplate || '',
-            {
-                errors: this.errors,
-            }
+            errorsTemplate || '',
+            Object.assign(
+                {
+                    errors: this.errors,
+                },
+                templateVariables || {}
+            )
         );
 
         return mustache.render(
             this.config.fieldTemplate || '',
             Object.assign(
                 {
-                    name: this.config.name,
+                    name: name,
                     fieldAttributes: utils.attributesToString(this.config.fieldAttributes),
                     fieldClasses: this.config.fieldClasses.join(' '),
                     label: this.config.label,
@@ -282,12 +302,17 @@ const Field = (function () {
      *     where the key is the field name and the value is the submitted value.
      *     This is passed in as the field may depend on the values of other
      *     fields in the form.
+     * @param {string} requiredText - Optional required text that is used as
+     *     fallback if it is not set in field config.
      * @returns {string[]} Empty array returned if field is valid, else array
      *     of error messages is returned. There may be more than 1 error
      *     message hence an array.
      */
-    Field.prototype.validate = function (fieldName, fieldValue, formData) {
+    Field.prototype.validate = function (fieldName, fieldValue, formData, requiredText = '') {
         let errors = [];
+
+        // Value from field config will override value passed in
+        requiredText = this.config.requiredText || requiredText;
 
         // In-built validation for required check
         if (this.config.required) {
@@ -295,7 +320,7 @@ const Field = (function () {
             if (!this.config.disabled &amp;&amp; !this.config.readonly
                 &amp;&amp; ['', undefined, null].includes(fieldValue) // does not check array or {}
             ) {
-                errors.push(this.config.requiredText);
+                errors.push(requiredText);
             }
         }
 
@@ -333,7 +358,7 @@ module.exports = Field;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Aug 22 2021 17:53:37 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sat Aug 28 2021 16:02:21 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

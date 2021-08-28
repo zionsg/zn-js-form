@@ -92,7 +92,11 @@ const Form = (function () {
      *     type (e.g. text, select) and value is Mustache.js template for
      *     rendering HTML for input element. The appropriate input template is
      *     used when rendering the input for a field and may be overridden in
-     *     field config.
+     *     field config. For dropdowns/checkboxes/radio buttons, the following
+     *     template variables are available: `hasSelectedOption` (indicates if
+     *     an option is selected), `emptyOptionText` (the text for the option
+     *     with empty value) and `options` (an array of objects, each having the
+     *     keys `optionValue`, `optionText` and `optionSelected`).
      * @property {string} method - HTTP method for form submission.
      * @property {string} name - Form name.
      * @property {string} requiredText - Text to return for error message if
@@ -255,21 +259,21 @@ const Form = (function () {
         // and index by the field names, for use with fieldsets
         let htmlByField = {};
         this.fields.forEach(function (field, fieldName) {
-            // Not exactly best practice to mutate the field object but
-            // it will be non-trivial to resolve the values in other ways
-            field.config.name = field.config.name || fieldName;
-
-            field.config.errorsTemplate = field.config.errorsTemplate
-                || self.config.errorsTemplate;
-
-            field.config.inputTemplate = field.config.inputTemplate
-                || self.config.inputTemplates[field.config.inputType]
-                || self.config.inputTemplates['input'];
-
-            field.config.requiredText = field.config.requiredText
-                || self.config.requiredText;
-
-            htmlByField[fieldName] = field.render();
+            // Note that the values from the field config will
+            // override the values for the same keys in the fallback
+            // template variable.
+            htmlByField[fieldName] = field.render(Object.assign(
+                {
+                    fallback: {
+                        name: fieldName,
+                        errorsTemplate: self.config.errorsTemplate,
+                        inputTemplate:
+                            self.config.inputTemplates[field.config.inputType]
+                            || self.config.inputTemplates['input'],
+                    }
+                },
+                templateVariables || {}
+            ));
         });
 
         // Render all fields if there are no fieldsets, else render fieldsets only
@@ -279,16 +283,24 @@ const Form = (function () {
             formHtml = Object.values(htmlByField).join('\n');
         } else {
             this.fieldsets.forEach(function (fieldset, fieldsetName) {
-                // Not exactly best practice to mutate the fieldset object but
-                // it will be non-trivial to resolve the values in other ways
-                fieldset.config.name = fieldset.config.name || fieldsetName;
-
                 let fieldsHtml = '';
                 fieldset.config.fieldNames.forEach(function (fieldName) {
                     fieldsHtml += (htmlByField[fieldName] || '') + '\n';
                 });
 
-                formHtml += fieldset.render({ fieldsHtml: fieldsHtml });
+                // Note that if the template variables passed in here are only
+                // fallbacks, i.e. if the fieldset config has these keys
+                // specified, the values from the fieldset config will
+                // override these values.
+                formHtml += fieldset.render(Object.assign(
+                    {
+                        fieldsHtml: fieldsHtml,
+                        fallback: {
+                            name: fieldsetName,
+                        },
+                    },
+                    templateVariables || {}
+                ));
             });
         }
 
@@ -336,8 +348,8 @@ const Form = (function () {
      * This is to aid when rendering the form after validation.
      *
      * The method signature allows the validation of a form submission in one
-     * line instead of having to call form.setData() each time before calling
-     * form.validate(). Example scenario in an Express app:
+     * line instead of having to call `form.setData()` each time before calling
+     * `form.validate()`. Example scenario in an Express app:
      *
      *     // If need form.setData() then code for response will be duplicated
      *     if ('GET' === request.method
@@ -370,7 +382,13 @@ const Form = (function () {
         let errors = {};
         let hasErrors = false;
         this.fields.forEach((field, fieldName) => {
-            let fieldErrors = field.validate(fieldName, formData[fieldName], formData);
+            let fieldErrors = field.validate(
+                fieldName,
+                formData[fieldName],
+                formData,
+                this.config.requiredText
+            );
+
             if (fieldErrors.length > 0) {
                 hasErrors = true;
                 errors[fieldName] = fieldErrors;
@@ -400,7 +418,7 @@ module.exports = Form;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sun Aug 22 2021 17:53:37 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.7</a> on Sat Aug 28 2021 16:02:21 GMT+0800 (Singapore Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
