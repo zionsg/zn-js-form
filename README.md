@@ -8,6 +8,7 @@ of the repository. Shell commands are all run from the root of the repository.
 
 ## Sections
 - [References](#references)
+- [Requirements](#requirements)
 - [Changelog](#changelog)
 - [Usage](#usage)
 - [Installation](#installation)
