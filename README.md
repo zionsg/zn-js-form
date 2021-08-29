@@ -197,7 +197,7 @@ of the repository. Shell commands are all run from the root of the repository.
     + `npm run test`: Execute tests.
 - To publish to NPM registry as a public package:
     + Update the application version:
-        * Update `version` key in `package.json`..
+        * Update `version` key in `package.json`.
         * Update version in `package-lock.json` by running `npm install --package-lock-only`.
         * Update the bundle script by running `npm run build`.
     + This part only needs to be done once.
